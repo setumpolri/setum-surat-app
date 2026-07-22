@@ -19,7 +19,7 @@
     <!-- Header / Navbar Resmi -->
     <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
         <div class="container">
-            <span class="navbar-brand mb-0 h1">📨 Sistem Penerimaan Surat - Setum Polri</span>
+            <span class="navbar-brand mb-0 h1">💌 Sistem Penerimaan Surat - Setum Polri</span>
         </div>
     </nav>
 
@@ -97,7 +97,8 @@
                 <!-- BARIS 2: Pengirim dan Tujuan -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="pengirim" class="form-label fw-bold">Instansi Pengirim:</label>
+                        <!-- BAGIAN YANG DIUBAH: Label diubah menjadi Pengirim -->
+                        <label for="pengirim" class="form-label fw-bold">Pengirim:</label>
                         <input type="text" id="pengirim" class="form-control" required>
                     </div>
 
@@ -147,7 +148,7 @@
                     </div>
                     <div class="col-md-3 text-md-end">
                         <button class="btn btn-success btn-sm me-1" onclick="unduhLaporanExcel()">📊 Unduh Excel</button>
-                        <button class="btn btn-danger btn-sm" onclick="unduhLaporanPDF()">📑 Unduh PDF</button>
+                        <button class="btn btn-danger btn-sm" onclick="unduhLaporanPDF()">📄 Unduh PDF</button>
                     </div>
                 </div>
 
@@ -160,7 +161,8 @@
                                 <th>Jenis Surat</th>
                                 <th>Nomor Surat</th>
                                 <th>Tanggal Diterima</th>
-                                <th>Instansi Pengirim</th>
+                                <!-- BAGIAN YANG DIUBAH: Judul tabel diubah menjadi Pengirim -->
+                                <th>Pengirim</th>
                                 <th>Tujuan</th>
                                 <th>Perihal</th>
                                 <th>Aksi</th>
@@ -215,7 +217,8 @@
                 return;
             }
             if (!pengirimSurat) {
-                alert("Peringatan: Instansi Pengirim belum diisi!");
+                // BAGIAN YANG DIUBAH: Alert peringatan disesuaikan
+                alert("Peringatan: Pengirim belum diisi!");
                 document.getElementById('pengirim').focus();
                 return;
             }
@@ -398,7 +401,8 @@
                     "Jenis Surat": surat.jenis_surat,
                     "Nomor Surat": surat.nomor_surat, 
                     "Tanggal Diterima": surat.tanggal_diterima, 
-                    "Instansi Pengirim": surat.pengirim, 
+                    // BAGIAN YANG DIUBAH: Header Excel diubah
+                    "Pengirim": surat.pengirim, 
                     "Tujuan": surat.tujuan, 
                     "Perihal": surat.perihal 
                 };
@@ -419,7 +423,8 @@
             doc.setFontSize(11);
             doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
 
-            const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal Diterima', 'Instansi Pengirim', 'Tujuan', 'Perihal']];
+            // BAGIAN YANG DIUBAH: Header kolom PDF diubah
+            const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal Diterima', 'Pengirim', 'Tujuan', 'Perihal']];
             const barisData = dataSuratTerakhir.map((surat, index) => [ 
                 index + 1, 
                 surat.jenis_surat || '-',
