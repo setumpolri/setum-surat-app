@@ -33,7 +33,7 @@
             <div class="card-body">
                 <input type="hidden" id="edit_id">
 
-                <!-- BARIS 1: Jenis, Nomor, Tanggal -->
+                <!-- BARIS 1: Jenis, Nomor, Tanggal & Jam -->
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="jenis_surat" class="form-label fw-bold">Jenis Surat:</label>
@@ -88,9 +88,10 @@
                         <input type="text" id="nomor_surat" class="form-control" required>
                     </div>
 
+                    <!-- BAGIAN YANG DIUBAH: Menggunakan datetime-local -->
                     <div class="col-md-4 mb-3">
-                        <label for="tanggal_diterima" class="form-label fw-bold">Tanggal Diterima:</label>
-                        <input type="date" id="tanggal_diterima" class="form-control" required>
+                        <label for="tanggal_diterima" class="form-label fw-bold">Tanggal & Jam Diterima:</label>
+                        <input type="datetime-local" id="tanggal_diterima" class="form-control" required>
                     </div>
                 </div>
 
@@ -177,7 +178,6 @@
                         </div>
                     </div>
 
-                    <!-- BAGIAN YANG DIUBAH: Kolom Tujuan menjadi Dropdown -->
                     <div class="col-md-6 mb-3">
                         <label for="tujuan" class="form-label fw-bold">Tujuan:</label>
                         <select id="tujuan" class="form-select" required>
@@ -280,6 +280,7 @@
                     <div class="col-md-3">
                         <input type="text" id="inputPencarian" class="form-control" placeholder="Cari teks..." onkeyup="tampilkanSurat()">
                     </div>
+                    <!-- Untuk filter pencarian, tetap menggunakan date (tanggal) agar lebih mudah dicari per hari -->
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-text bg-white">Dari</span>
@@ -306,7 +307,8 @@
                                 <th style="width: 5%;">No</th>
                                 <th style="width: 15%;">Jenis Surat</th>
                                 <th style="width: 15%;">Nomor Surat</th>
-                                <th style="width: 12%;">Tanggal Diterima</th>
+                                <!-- HEADER TABEL DIUBAH -->
+                                <th style="width: 12%;">Tanggal & Jam Diterima</th>
                                 <th style="width: 15%;">Pengirim</th>
                                 <th style="width: 13%;">Tujuan</th>
                                 <th style="width: 15%;">Perihal</th>
@@ -335,6 +337,27 @@
 
         let dataSuratTerakhir = [];
 
+        // --- FUNGSI BARU: MENGUBAH FORMAT TANGGAL DAN JAM (dd/mm/yyyy hh:mm) ---
+        function formatTanggalWaktu(tanggalInput) {
+            if (!tanggalInput) return '-';
+            
+            // Ubah string dari database menjadi objek Date
+            const dateObj = new Date(tanggalInput);
+            
+            // Jika tanggal tidak valid, kembalikan nilai aslinya saja
+            if (isNaN(dateObj)) return tanggalInput;
+            
+            // Ambil masing-masing bagian, padStart digunakan untuk menambahkan angka '0' di depan jika angkanya satuan
+            const hari = String(dateObj.getDate()).padStart(2, '0');
+            const bulan = String(dateObj.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+            const tahun = dateObj.getFullYear();
+            const jam = String(dateObj.getHours()).padStart(2, '0');
+            const menit = String(dateObj.getMinutes()).padStart(2, '0');
+            
+            // Gabungkan menjadi format dd/mm/yyyy hh:mm
+            return `${hari}/${bulan}/${tahun} ${jam}:${menit}`;
+        }
+
         // --- FUNGSI MENGATUR MUNCULNYA INPUT MANUAL PENGIRIM ---
         function cekPilihanPengirim() {
             const pilihan = document.getElementById('pengirim').value;
@@ -342,11 +365,11 @@
             const inputLain = document.getElementById('pengirim_lain');
 
             if (pilihan === "Instansi Luar") {
-                wrapperLain.classList.remove('d-none'); // Tampilkan kotak input
+                wrapperLain.classList.remove('d-none');
                 inputLain.focus();
             } else {
-                wrapperLain.classList.add('d-none'); // Sembunyikan kotak input
-                inputLain.value = ""; // Kosongkan nilainya
+                wrapperLain.classList.add('d-none');
+                inputLain.value = "";
             }
         }
 
@@ -361,7 +384,6 @@
             const tujuanSurat = document.getElementById('tujuan').value;
             const perihalSurat = document.getElementById('perihal').value;
 
-            // Tentukan nilai akhir pengirim (jika Instansi Luar, ambil dari input text manual)
             let pengirimFinal = pilihanPengirim;
             if (pilihanPengirim === "Instansi Luar") {
                 pengirimFinal = inputPengirimLain;
@@ -379,7 +401,7 @@
                 return;
             }
             if (!tanggalDiterima) {
-                alert("Peringatan: Tanggal Diterima belum diisi!");
+                alert("Peringatan: Tanggal & Jam Diterima belum diisi!");
                 document.getElementById('tanggal_diterima').focus();
                 return;
             }
@@ -394,7 +416,6 @@
                 return;
             }
             if (!tujuanSurat) {
-                // PESAN PERINGATAN DIUBAH
                 alert("Peringatan: Tujuan Surat belum dipilih!");
                 document.getElementById('tujuan').focus();
                 return;
@@ -462,12 +483,13 @@
                 query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
             }
 
+            // Filter ini tetap bisa bekerja karena inputnya tetap merujuk ke tanggal
             if (tanggalMulai) {
                 query = query.gte('tanggal_diterima', tanggalMulai);
             }
 
             if (tanggalSampai) {
-                query = query.lte('tanggal_diterima', tanggalSampai);
+                query = query.lte('tanggal_diterima', tanggalSampai + 'T23:59:59'); // Mencakup sampai akhir hari tersebut
             }
 
             const { data, error } = await query;
@@ -493,7 +515,8 @@
                         <td class="text-center">${index + 1}</td>
                         <td>${surat.jenis_surat || '-'}</td>
                         <td>${surat.nomor_surat}</td>
-                        <td class="text-center">${surat.tanggal_diterima || '-'}</td>
+                        <!-- BAGIAN YANG DIUBAH: Menggunakan fungsi formatTanggalWaktu -->
+                        <td class="text-center">${formatTanggalWaktu(surat.tanggal_diterima)}</td>
                         <td>${surat.pengirim}</td>
                         <td>${surat.tujuan || '-'}</td>
                         <td>${surat.perihal}</td>
@@ -515,13 +538,19 @@
                 document.getElementById('edit_id').value = surat.id;
                 document.getElementById('jenis_surat').value = surat.jenis_surat || '';
                 document.getElementById('nomor_surat').value = surat.nomor_surat;
-                document.getElementById('tanggal_diterima').value = surat.tanggal_diterima || '';
+                
+                // Mencegah error jika data dari Supabase memiliki format detik atau mili-detik tambahan. 
+                // Input datetime-local hanya menerima format panjang 16 karakter (YYYY-MM-DDTHH:mm).
+                let tanggalDiterimaValue = surat.tanggal_diterima || '';
+                if (tanggalDiterimaValue.length > 16) {
+                    tanggalDiterimaValue = tanggalDiterimaValue.substring(0, 16);
+                }
+                document.getElementById('tanggal_diterima').value = tanggalDiterimaValue;
                 
                 const selectPengirim = document.getElementById('pengirim');
                 const inputPengirimLain = document.getElementById('pengirim_lain');
                 const wrapperLain = document.getElementById('wrapper_pengirim_lain');
 
-                // Cek apakah pengirim ada di dalam daftar dropdown atau merupakan instansi luar manual
                 let opsiAda = Array.from(selectPengirim.options).some(option => option.value === surat.pengirim);
 
                 if (opsiAda) {
@@ -534,7 +563,6 @@
                     inputPengirimLain.value = surat.pengirim;
                 }
 
-                // Masukkan data ke dropdown Tujuan
                 document.getElementById('tujuan').value = surat.tujuan || '';
                 document.getElementById('perihal').value = surat.perihal;
                 
@@ -592,7 +620,8 @@
                     "No": index + 1, 
                     "Jenis Surat": surat.jenis_surat,
                     "Nomor Surat": surat.nomor_surat, 
-                    "Tanggal Diterima": surat.tanggal_diterima, 
+                    // FORMAT EXCEL MENGGUNAKAN TANGGAL BARU
+                    "Tanggal & Jam Diterima": formatTanggalWaktu(surat.tanggal_diterima), 
                     "Pengirim": surat.pengirim, 
                     "Tujuan": surat.tujuan, 
                     "Perihal": surat.perihal 
@@ -614,12 +643,14 @@
             doc.setFontSize(11);
             doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
 
-            const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal Diterima', 'Pengirim', 'Tujuan', 'Perihal']];
+            // HEADER PDF DIUBAH
+            const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal & Jam Diterima', 'Pengirim', 'Tujuan', 'Perihal']];
             const barisData = dataSuratTerakhir.map((surat, index) => [ 
                 index + 1, 
                 surat.jenis_surat || '-',
                 surat.nomor_surat, 
-                surat.tanggal_diterima || '-', 
+                // FORMAT PDF MENGGUNAKAN TANGGAL BARU
+                formatTanggalWaktu(surat.tanggal_diterima), 
                 surat.pengirim, 
                 surat.tujuan || '-', 
                 surat.perihal 
