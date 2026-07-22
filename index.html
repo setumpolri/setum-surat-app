@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>e-Pos Setum Polri</title>
     
-    <!-- Ikon/Logo Tab Browser (Ganti 'nama-file-logo.png' dengan nama file logo Anda di GitHub) -->
+    <!-- Ikon/Logo Tab Browser -->
     <link rel="icon" type="image/png" href="Setum_Polri.png">
 
     <!-- CSS Bootstrap 5 untuk Desain UI/UX Modern -->
@@ -324,6 +324,12 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Navigasi Pagination Surat Masuk -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div id="info_halaman_masuk" class="text-muted small"></div>
+                        <ul id="navigasi_halaman_masuk" class="pagination pagination-sm mb-0"></ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -611,6 +617,12 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Navigasi Pagination Surat Keluar -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div id="info_halaman_keluar" class="text-muted small"></div>
+                        <ul id="navigasi_halaman_keluar" class="pagination pagination-sm mb-0"></ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -628,6 +640,11 @@
 
         let dataMasukTerakhir = [];
         let dataKeluarTerakhir = [];
+
+        // Variabel untuk Pagination
+        const barisPerHalaman = 10;
+        let halamanMasukAktif = 1;
+        let halamanKeluarAktif = 1;
 
         // --- NAVIGASI MENU DENGAN PENYIMPANAN LOCALSTORAGE ---
         function gantiMenu(menu, simpanKeStorage = true) {
@@ -775,14 +792,43 @@
             }
         }
 
-        // --- TAMPILKAN / CARI SURAT ---
+        // --- TAMPILKAN / CARI SURAT DENGAN PAGINATION ---
         async function tampilkanSurat(tipe) {
             const namaTabel = tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar';
             const keyword = document.getElementById(`cari_${tipe}`).value;
             const tanggalMulai = document.getElementById(`mulai_${tipe}`).value;
             const tanggalSampai = document.getElementById(`sampai_${tipe}`).value;
+            
+            let halamanAktif = tipe === 'masuk' ? halamanMasukAktif : halamanKeluarAktif;
 
-            let query = supabaseClient.from(namaTabel).select('*').order('dibuat_pada', { ascending: false });
+            // 1. Hitung total data terlebih dahulu untuk pagination
+            let queryCount = supabaseClient.from(namaTabel).select('*', { count: 'exact', head: true });
+            if (keyword) {
+                queryCount = queryCount.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
+            }
+            if (tanggalMulai) {
+                queryCount = queryCount.gte('tanggal_diterima', tanggalMulai);
+            }
+            if (tanggalSampai) {
+                queryCount = queryCount.lte('tanggal_diterima', tanggalSampai + 'T23:59:59');
+            }
+            const { count, error: countError } = await queryCount;
+            if (countError) { console.error("Gagal menghitung data:", countError); return; }
+
+            const totalData = count || 0;
+            const totalHalaman = Math.ceil(totalData / barisPerHalaman) || 1;
+
+            if (halamanAktif > totalHalaman) halamanAktif = totalHalaman;
+            if (halamanAktif < 1) halamanAktif = 1;
+
+            if (tipe === 'masuk') halamanMasukAktif = halamanAktif;
+            else halamanKeluarAktif = halamanAktif;
+
+            // 2. Ambil data sesuai halaman aktif (range)
+            const dariIndex = (halamanAktif - 1) * barisPerHalaman;
+            const sampaiIndex = dariIndex + barisPerHalaman - 1;
+
+            let query = supabaseClient.from(namaTabel).select('*').order('dibuat_pada', { ascending: false }).range(dariIndex, sampaiIndex);
 
             if (keyword) {
                 query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
@@ -805,13 +851,16 @@
 
             if (data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
+                document.getElementById(`info_halaman_${tipe}`).innerText = "Menampilkan 0 dari 0 data";
+                document.getElementById(`navigasi_halaman_${tipe}`).innerHTML = "";
                 return;
             }
 
             data.forEach((surat, index) => {
+                const nomorUrut = dariIndex + index + 1;
                 const baris = `
                     <tr>
-                        <td class="text-center">${index + 1}</td>
+                        <td class="text-center">${nomorUrut}</td>
                         <td>${surat.jenis_surat || '-'}</td>
                         <td>${surat.nomor_surat}</td>
                         <td class="text-center">${formatTanggalWaktu(surat.tanggal_diterima)}</td>
@@ -826,6 +875,46 @@
                 `;
                 tbody.innerHTML += baris;
             });
+
+            // 3. Render Tombol Navigasi Pagination & Info
+            renderPagination(tipe, halamanAktif, totalHalaman, totalData);
+        }
+
+        // Fungsi Bantu untuk Render Tombol Halaman
+        function renderPagination(tipe, halamanAktif, totalHalaman, totalData) {
+            const infoEl = document.getElementById(`info_halaman_${tipe}`);
+            const navEl = document.getElementById(`navigasi_halaman_${tipe}`);
+            
+            const dariData = totalData === 0 ? 0 : ((halamanAktif - 1) * barisPerHalaman) + 1;
+            const sampaiData = Math.min(halamanAktif * barisPerHalaman, totalData);
+            infoEl.innerText = `Menampilkan ${dariData} - ${sampaiData} dari ${totalData} data`;
+
+            let htmlNav = '';
+            
+            htmlNav += `<li class="page-item ${halamanAktif === 1 ? 'disabled' : ''}">
+                            <button class="page-link" onclick="gantiHalaman('${tipe}', ${halamanAktif - 1})">Sebelumnya</button>
+                        </li>`;
+
+            for (let i = 1; i <= totalHalaman; i++) {
+                htmlNav += `<li class="page-item ${halamanAktif === i ? 'active' : ''}">
+                                <button class="page-link" onclick="gantiHalaman('${tipe}', ${i})">${i}</button>
+                            </li>`;
+            }
+
+            htmlNav += `<li class="page-item ${halamanAktif === totalHalaman ? 'disabled' : ''}">
+                            <button class="page-link" onclick="gantiHalaman('${tipe}', ${halamanAktif + 1})">Berikutnya</button>
+                        </li>`;
+
+            navEl.innerHTML = htmlNav;
+        }
+
+        function gantiHalaman(tipe, halamanBaru) {
+            if (tipe === 'masuk') {
+                halamanMasukAktif = halamanBaru;
+            } else {
+                halamanKeluarAktif = halamanBaru;
+            }
+            tampilkanSurat(tipe);
         }
 
         // --- EDIT SURAT ---
@@ -970,7 +1059,7 @@
         // Cek apakah ada menu yang tersimpan sebelumnya di browser
         const menuTersimpan = localStorage.getItem('menuAktif');
         if (menuTersimpan) {
-            gantiMenu(menuTersimpan, false); // Buka menu terakhir tanpa menimpa storage
+            gantiMenu(menuTersimpan, false); 
         }
     </script>
 </body>
