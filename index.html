@@ -94,7 +94,7 @@
                     </div>
                 </div>
 
-                <!-- BARIS 2: Pengirim (Dropdown & Input Manual) dan Tujuan -->
+                <!-- BARIS 2: Pengirim dan Tujuan -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="pengirim" class="form-label fw-bold">Pengirim:</label>
@@ -130,7 +130,7 @@
                             <option value="Yanma Polri">Yanma Polri</option>
                             <option value="Setum Polri">Setum Polri</option>
 
-                            <!-- DAFTAR POLDA YANG BARU DITAMBAHKAN -->
+                            <!-- DAFTAR POLDA -->
                             <option value="Polda Aceh">Polda Aceh</option>
                             <option value="Polda Sumatera Utara">Polda Sumatera Utara</option>
                             <option value="Polda Sumatera Barat">Polda Sumatera Barat</option>
@@ -171,16 +171,86 @@
                             <option value="Polda Papua Selatan">Polda Papua Selatan</option>
                         </select>
 
-                        <!-- INPUT MANUAL TAMBAHAN KETIKA PILIH INSTANSI LUAR -->
                         <div id="wrapper_pengirim_lain" class="d-none">
                             <label for="pengirim_lain" class="form-label fw-bold text-muted small">Silakan masukan pengirim disini:</label>
                             <input type="text" id="pengirim_lain" class="form-control" placeholder="Masukkan nama instansi luar...">
                         </div>
                     </div>
 
+                    <!-- BAGIAN YANG DIUBAH: Kolom Tujuan menjadi Dropdown -->
                     <div class="col-md-6 mb-3">
                         <label for="tujuan" class="form-label fw-bold">Tujuan:</label>
-                        <input type="text" id="tujuan" class="form-control" required>
+                        <select id="tujuan" class="form-select" required>
+                            <option value="" disabled selected>-- Pilih Tujuan --</option>
+                            <!-- PJU Mabes Polri -->
+                            <option value="Kapolri">Kapolri</option>
+                            <option value="Wakapolri">Wakapolri</option>
+                            <option value="Irwasum Polri">Irwasum Polri</option>
+                            <option value="Kabareskrim Polri">Kabareskrim Polri</option>
+                            <option value="Kabaharkam Polri">Kabaharkam Polri</option>
+                            <option value="Kakorbrimob Polri">Kakorbrimob Polri</option>
+                            <option value="Kabaintelkam Polri">Kabaintelkam Polri</option>
+                            <option value="Kalemdiklat Polri">Kalemdiklat Polri</option>
+                            <option value="Astamaops Polri">Astamaops Polri</option>
+                            <option value="Astamarena Polri">Astamarena Polri</option>
+                            <option value="Kakorlantas Polri">Kakorlantas Polri</option>
+                            <option value="Kakortastipidkor Polri">Kakortastipidkor Polri</option>
+                            <option value="Kadensus 88 AT Polri">Kadensus 88 AT Polri</option>
+                            <option value="As SDM Kapolri">As SDM Kapolri</option>
+                            <option value="Aslog Kapolri">Aslog Kapolri</option>
+                            <option value="Kadivpropam Polri">Kadivpropam Polri</option>
+                            <option value="Kadivkum Polri">Kadivkum Polri</option>
+                            <option value="Kadivhumas Polri">Kadivhumas Polri</option>
+                            <option value="Kadiv TIK Polri">Kadiv TIK Polri</option>
+                            <option value="Kadivhubinter Polri">Kadivhubinter Polri</option>
+                            <option value="Kapusdokkes Polri">Kapusdokkes Polri</option>
+                            <option value="Koorsahli Kapolri">Koorsahli Kapolri</option>
+                            <option value="Kapuslitbang Polri">Kapuslitbang Polri</option>
+                            <option value="Kapuskeu Polri">Kapuskeu Polri</option>
+                            <option value="Kapusjarah Polri">Kapusjarah Polri</option>
+                            <option value="Koorspripim Polri">Koorspripim Polri</option>
+                            <option value="Kayanma Polri">Kayanma Polri</option>
+                            <option value="Kasetum Polri">Kasetum Polri</option>
+                            <!-- Kapolda -->
+                            <option value="Kapolda Aceh">Kapolda Aceh</option>
+                            <option value="Kapolda Sumatera Utara">Kapolda Sumatera Utara</option>
+                            <option value="Kapolda Sumatera Barat">Kapolda Sumatera Barat</option>
+                            <option value="Kapolda Riau">Kapolda Riau</option>
+                            <option value="Kapolda Kepulauan Riau">Kapolda Kepulauan Riau</option>
+                            <option value="Kapolda Jambi">Kapolda Jambi</option>
+                            <option value="Kapolda Bengkulu">Kapolda Bengkulu</option>
+                            <option value="Kapolda Sumatera Selatan">Kapolda Sumatera Selatan</option>
+                            <option value="Kapolda Kepulauan Bangka Belitung">Kapolda Kepulauan Bangka Belitung</option>
+                            <option value="Kapolda Lampung">Kapolda Lampung</option>
+                            <option value="Kapolda Metro Jaya">Kapolda Metro Jaya</option>
+                            <option value="Kapolda Banten">Kapolda Banten</option>
+                            <option value="Kapolda Jawa Barat">Kapolda Jawa Barat</option>
+                            <option value="Kapolda Jawa Tengah">Kapolda Jawa Tengah</option>
+                            <option value="Kapolda Daerah Istimewa Yogyakarta">Kapolda Daerah Istimewa Yogyakarta</option>
+                            <option value="Kapolda Jawa Timur">Kapolda Jawa Timur</option>
+                            <option value="Kapolda Bali">Kapolda Bali</option>
+                            <option value="Kapolda Nusa Tenggara Barat">Kapolda Nusa Tenggara Barat</option>
+                            <option value="Kapolda Nusa Tenggara Timur">Kapolda Nusa Tenggara Timur</option>
+                            <option value="Kapolda Kalimantan Barat">Kapolda Kalimantan Barat</option>
+                            <option value="Kapolda Kalimantan Tengah">Kapolda Kalimantan Tengah</option>
+                            <option value="Kapolda Kalimantan Selatan">Kapolda Kalimantan Selatan</option>
+                            <option value="Kapolda Kalimantan Timur">Kapolda Kalimantan Timur</option>
+                            <option value="Kapolda Kalimantan Utara">Kapolda Kalimantan Utara</option>
+                            <option value="Kapolda Sulawesi Utara">Kapolda Sulawesi Utara</option>
+                            <option value="Kapolda Gorontalo">Kapolda Gorontalo</option>
+                            <option value="Kapolda Sulawesi Tengah">Kapolda Sulawesi Tengah</option>
+                            <option value="Kapolda Sulawesi Barat">Kapolda Sulawesi Barat</option>
+                            <option value="Kapolda Sulawesi Selatan">Kapolda Sulawesi Selatan</option>
+                            <option value="Kapolda Sulawesi Tenggara">Kapolda Sulawesi Tenggara</option>
+                            <option value="Kapolda Maluku">Kapolda Maluku</option>
+                            <option value="Kapolda Maluku Utara">Kapolda Maluku Utara</option>
+                            <option value="Kapolda Papua Barat">Kapolda Papua Barat</option>
+                            <option value="Kapolda Papua Barat Daya">Kapolda Papua Barat Daya</option>
+                            <option value="Kapolda Papua">Kapolda Papua</option>
+                            <option value="Kapolda Papua Tengah">Kapolda Papua Tengah</option>
+                            <option value="Kapolda Papua Pegunungan">Kapolda Papua Pegunungan</option>
+                            <option value="Kapolda Papua Selatan">Kapolda Papua Selatan</option>
+                        </select>
                     </div>
                 </div>
 
@@ -324,7 +394,8 @@
                 return;
             }
             if (!tujuanSurat) {
-                alert("Peringatan: Tujuan Surat belum diisi!");
+                // PESAN PERINGATAN DIUBAH
+                alert("Peringatan: Tujuan Surat belum dipilih!");
                 document.getElementById('tujuan').focus();
                 return;
             }
@@ -463,6 +534,7 @@
                     inputPengirimLain.value = surat.pengirim;
                 }
 
+                // Masukkan data ke dropdown Tujuan
                 document.getElementById('tujuan').value = surat.tujuan || '';
                 document.getElementById('perihal').value = surat.perihal;
                 
