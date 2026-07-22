@@ -19,7 +19,7 @@
     <!-- Header / Navbar Resmi -->
     <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
         <div class="container">
-            <span class="navbar-brand mb-0 h1">✉️ Sistem Penerimaan Surat - Setum Polri</span>
+            <span class="navbar-brand mb-0 h1">💌 Sistem Penerimaan Surat - Setum Polri</span>
         </div>
     </nav>
 
@@ -94,12 +94,41 @@
                     </div>
                 </div>
 
-                <!-- BARIS 2: Pengirim dan Tujuan -->
+                <!-- BARIS 2: Pengirim (Dropdown) dan Tujuan -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <!-- BAGIAN YANG DIUBAH: Label diubah menjadi Pengirim -->
                         <label for="pengirim" class="form-label fw-bold">Pengirim:</label>
-                        <input type="text" id="pengirim" class="form-control" required>
+                        <!-- DIUBAH MENJADI DROPDOWN DENGAN DAFTAR PILIHAN -->
+                        <select id="pengirim" class="form-select" required>
+                            <option value="" disabled selected>-- Pilih Pengirim --</option>
+                            <option value="Instansi Luar">Instansi Luar</option>
+                            <option value="Itwasum Polri">Itwasum Polri</option>
+                            <option value="Bareskrim Polri">Bareskrim Polri</option>
+                            <option value="Baharkam Polri">Baharkam Polri</option>
+                            <option value="Korbrimob Polri">Korbrimob Polri</option>
+                            <option value="Baintelkam Polri">Baintelkam Polri</option>
+                            <option value="Lemdiklat Polri">Lemdiklat Polri</option>
+                            <option value="Stamaops Polri">Stamaops Polri</option>
+                            <option value="Stamarena Polri">Stamarena Polri</option>
+                            <option value="Korlantas Polri">Korlantas Polri</option>
+                            <option value="Kortastipidkor Polri">Kortastipidkor Polri</option>
+                            <option value="Densus 88 AT Polri">Densus 88 AT Polri</option>
+                            <option value="SDM Polri">SDM Polri</option>
+                            <option value="Slog Polri">Slog Polri</option>
+                            <option value="Divpropam Polri">Divpropam Polri</option>
+                            <option value="Divkum Polri">Divkum Polri</option>
+                            <option value="Divhumas Polri">Divhumas Polri</option>
+                            <option value="Div TIK Polri">Div TIK Polri</option>
+                            <option value="Divhubinter Polri">Divhubinter Polri</option>
+                            <option value="Pusdokkes Polri">Pusdokkes Polri</option>
+                            <option value="Sahli Kapolri">Sahli Kapolri</option>
+                            <option value="Puslitbang Polri">Puslitbang Polri</option>
+                            <option value="Puskeu Polri">Puskeu Polri</option>
+                            <option value="Pusjarah Polri">Pusjarah Polri</option>
+                            <option value="Spripim Polri">Spripim Polri</option>
+                            <option value="Yanma Polri">Yanma Polri</option>
+                            <option value="Setum Polri">Setum Polri</option>
+                        </select>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -161,7 +190,6 @@
                                 <th>Jenis Surat</th>
                                 <th>Nomor Surat</th>
                                 <th>Tanggal Diterima</th>
-                                <!-- BAGIAN YANG DIUBAH: Judul tabel diubah menjadi Pengirim -->
                                 <th>Pengirim</th>
                                 <th>Tujuan</th>
                                 <th>Perihal</th>
@@ -203,8 +231,8 @@
             // --- VALIDASI SPESIFIK SATU PER SATU ---
             if (!jenisSurat) {
                 alert("Peringatan: Jenis Surat belum dipilih!");
-                document.getElementById('jenis_surat').focus(); // Arahkan kursor ke input ini
-                return; // Hentikan proses simpan
+                document.getElementById('jenis_surat').focus(); 
+                return; 
             }
             if (!nomorSurat) {
                 alert("Peringatan: Nomor Surat belum diisi!");
@@ -217,8 +245,7 @@
                 return;
             }
             if (!pengirimSurat) {
-                // BAGIAN YANG DIUBAH: Alert peringatan disesuaikan
-                alert("Peringatan: Pengirim belum diisi!");
+                alert("Peringatan: Pengirim belum dipilih!");
                 document.getElementById('pengirim').focus();
                 return;
             }
@@ -344,7 +371,7 @@
                 document.getElementById('jenis_surat').value = surat.jenis_surat || '';
                 document.getElementById('nomor_surat').value = surat.nomor_surat;
                 document.getElementById('tanggal_diterima').value = surat.tanggal_diterima || '';
-                document.getElementById('pengirim').value = surat.pengirim;
+                document.getElementById('pengirim').value = surat.pengirim || '';
                 document.getElementById('tujuan').value = surat.tujuan || '';
                 document.getElementById('perihal').value = surat.perihal;
                 
@@ -401,7 +428,6 @@
                     "Jenis Surat": surat.jenis_surat,
                     "Nomor Surat": surat.nomor_surat, 
                     "Tanggal Diterima": surat.tanggal_diterima, 
-                    // BAGIAN YANG DIUBAH: Header Excel diubah
                     "Pengirim": surat.pengirim, 
                     "Tujuan": surat.tujuan, 
                     "Perihal": surat.perihal 
@@ -423,7 +449,6 @@
             doc.setFontSize(11);
             doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
 
-            // BAGIAN YANG DIUBAH: Header kolom PDF diubah
             const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal Diterima', 'Pengirim', 'Tujuan', 'Perihal']];
             const barisData = dataSuratTerakhir.map((surat, index) => [ 
                 index + 1, 
