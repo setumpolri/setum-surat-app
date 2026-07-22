@@ -69,12 +69,6 @@
                     <input type="text" id="perihal" class="form-control" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="file_surat" class="form-label fw-bold">Scan File Surat (Format PDF):</label>
-                    <input type="file" id="file_surat" class="form-control" accept=".pdf">
-                    <small id="keterangan_file_edit" class="text-success mt-1 d-none">*Biarkan kosong jika tidak ingin mengubah file PDF sebelumnya.</small>
-                </div>
-
                 <div class="d-flex gap-2">
                     <button id="btn_simpan" class="btn btn-primary" onclick="simpanSurat()">Simpan Data Surat</button>
                     <button id="btn_batal_edit" class="btn btn-secondary d-none" onclick="batalEdit()">Batal Edit</button>
@@ -114,7 +108,6 @@
                                 <th>Instansi Pengirim</th>
                                 <th>Tujuan</th>
                                 <th>Perihal</th>
-                                <th>File PDF</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -149,7 +142,6 @@
             const pengirimSurat = document.getElementById('pengirim').value;
             const tujuanSurat = document.getElementById('tujuan').value;
             const perihalSurat = document.getElementById('perihal').value;
-            const inputFile = document.getElementById('file_surat');
 
             if(!jenisSurat || !nomorSurat || !tanggalDiterima || !pengirimSurat || !tujuanSurat || !perihalSurat) {
                 alert("Mohon isi semua data teks surat!");
@@ -158,27 +150,7 @@
 
             const pesanEl = document.getElementById('pesan');
             pesanEl.className = "mt-3 fw-bold text-primary";
-            pesanEl.innerText = "Sedang memproses dan menyimpan data...";
-
-            let filePath = null;
-
-            if (inputFile.files.length > 0) {
-                const file = inputFile.files[0];
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Date.now()}.${fileExt}`;
-                filePath = `${fileName}`;
-
-                const { error: uploadError } = await supabaseClient.storage
-                    .from('berkas_surat')
-                    .upload(filePath, file);
-
-                if (uploadError) {
-                    console.error("Gagal upload file:", uploadError);
-                    alert("Gagal mengunggah file PDF!");
-                    pesanEl.innerText = "";
-                    return;
-                }
-            }
+            pesanEl.innerText = "Sedang menyimpan data...";
 
             let dataYangDisimpan = { 
                 jenis_surat: jenisSurat,
@@ -188,10 +160,6 @@
                 tujuan: tujuanSurat,
                 perihal: perihalSurat
             };
-
-            if (filePath) {
-                dataYangDisimpan.file_url = filePath;
-            }
 
             let dbError = null;
 
@@ -230,7 +198,6 @@
                 .select('*')
                 .order('dibuat_pada', { ascending: false });
 
-            // Fitur pencarian diperbarui agar bisa mencari berdasarkan jenis_surat juga
             if (keyword) {
                 query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
             }
@@ -248,20 +215,11 @@
             tbody.innerHTML = ''; 
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
                 return;
             }
 
             data.forEach((surat, index) => {
-                let tombolFile = '<span class="text-muted small">Tidak ada file</span>';
-                if (surat.file_url) {
-                    const { data: publicURLData } = supabaseClient.storage
-                        .from('berkas_surat')
-                        .getPublicUrl(surat.file_url);
-
-                    tombolFile = `<a href="${publicURLData.publicUrl}" target="_blank" class="btn btn-success btn-sm">Buka PDF</a>`;
-                }
-
                 const baris = `
                     <tr>
                         <td class="text-center">${index + 1}</td>
@@ -271,10 +229,9 @@
                         <td>${surat.pengirim}</td>
                         <td>${surat.tujuan || '-'}</td>
                         <td>${surat.perihal}</td>
-                        <td class="text-center">${tombolFile}</td>
                         <td class="text-center">
                             <button class="btn btn-warning btn-sm mb-1" onclick="editSurat('${surat.id}')">Edit</button>
-                            <button class="btn btn-danger btn-sm mb-1" onclick="hapusSurat('${surat.id}', '${surat.file_url || ''}')">Hapus</button>
+                            <button class="btn btn-danger btn-sm mb-1" onclick="hapusSurat('${surat.id}')">Hapus</button>
                         </td>
                     </tr>
                 `;
@@ -300,7 +257,6 @@
                 btnSimpan.className = "btn btn-warning";
                 
                 document.getElementById('btn_batal_edit').classList.remove('d-none');
-                document.getElementById('keterangan_file_edit').classList.remove('d-none');
                 document.getElementById('pesan').innerText = "";
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -316,24 +272,18 @@
             document.getElementById('pengirim').value = '';
             document.getElementById('tujuan').value = '';
             document.getElementById('perihal').value = '';
-            document.getElementById('file_surat').value = '';
 
             const btnSimpan = document.getElementById('btn_simpan');
             btnSimpan.innerText = "Simpan Data Surat";
             btnSimpan.className = "btn btn-primary";
 
             document.getElementById('btn_batal_edit').classList.add('d-none');
-            document.getElementById('keterangan_file_edit').classList.add('d-none');
         }
 
         // --- 6. FUNGSI MENGHAPUS SURAT ---
-        async function hapusSurat(idSurat, fileUrl) {
+        async function hapusSurat(idSurat) {
             const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data surat ini?");
             if (!konfirmasi) return;
-
-            if (fileUrl) {
-                await supabaseClient.storage.from('berkas_surat').remove([fileUrl]);
-            }
 
             const { error } = await supabaseClient.from('surat_masuk').delete().eq('id', idSurat);
 
