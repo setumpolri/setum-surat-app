@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 850px; margin: auto; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
         input[type="text"], input[type="date"], input[type="file"] { width: 100%; padding: 8px; box-sizing: border-box; }
@@ -28,10 +28,9 @@
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #004d99; color: white; }
         
-        /* Gaya tombol-tombol aksi tabel */
         .btn-edit { background-color: #fbc02d; padding: 5px 10px; font-size: 12px; color: black; border: none; cursor: pointer; margin-right: 5px; }
         .btn-edit:hover { background-color: #f9a825; }
-        .btn-hapus { background-color: #cc0000; padding: 5px 10px; font-size: 12px; color: white; border: none; cursor: pointer; }
+        .btn-hapus { background-color: #cc0000; padding: 5px 10px; font-size: 12px; color: white; border: none; cursor: pointer; margin-top: 5px; }
         .btn-hapus:hover { background-color: #990000; }
         .btn-download { background-color: #008000; padding: 5px 10px; font-size: 12px; color: white; text-decoration: none; display: inline-block; }
         .btn-download:hover { background-color: #006600; }
@@ -48,7 +47,6 @@
 
     <h2>Formulir Penerimaan Surat</h2>
     
-    <!-- Input tersembunyi untuk menyimpan ID saat proses edit -->
     <input type="hidden" id="edit_id">
 
     <div class="form-group">
@@ -64,6 +62,12 @@
     <div class="form-group">
         <label for="pengirim">Instansi Pengirim:</label>
         <input type="text" id="pengirim" required>
+    </div>
+
+    <!-- BAGIAN BARU: Kolom Input Tujuan -->
+    <div class="form-group">
+        <label for="tujuan">Tujuan:</label>
+        <input type="text" id="tujuan" required>
     </div>
 
     <div class="form-group">
@@ -101,6 +105,8 @@
                 <th>Nomor Surat</th>
                 <th>Tanggal</th>
                 <th>Pengirim</th>
+                <!-- BAGIAN BARU: Header Tabel Tujuan -->
+                <th>Tujuan</th>
                 <th>Perihal</th>
                 <th>File PDF</th>
                 <th>Aksi</th>
@@ -121,14 +127,15 @@
 
         // --- 2. FUNGSI MENYIMPAN / MEMPERBARUI SURAT ---
         async function simpanSurat() {
-            const editId = document.getElementById('edit_id').value; // Mengecek apakah sedang mode edit
+            const editId = document.getElementById('edit_id').value;
             const nomorSurat = document.getElementById('nomor_surat').value;
             const tanggalSurat = document.getElementById('tanggal_surat').value;
             const pengirimSurat = document.getElementById('pengirim').value;
+            const tujuanSurat = document.getElementById('tujuan').value; // Mengambil nilai Tujuan
             const perihalSurat = document.getElementById('perihal').value;
             const inputFile = document.getElementById('file_surat');
 
-            if(!nomorSurat || !tanggalSurat || !pengirimSurat || !perihalSurat) {
+            if(!nomorSurat || !tanggalSurat || !pengirimSurat || !tujuanSurat || !perihalSurat) {
                 alert("Mohon isi semua data teks surat!");
                 return;
             }
@@ -138,7 +145,6 @@
 
             let filePath = null;
 
-            // Proses Upload File (Jika ada file baru yang dipilih)
             if (inputFile.files.length > 0) {
                 const file = inputFile.files[0];
                 const fileExt = file.name.split('.').pop();
@@ -157,31 +163,28 @@
                 }
             }
 
-            // Menyiapkan paket data yang akan dikirim ke database
+            // Memasukkan data tujuan ke dalam paket data
             let dataYangDisimpan = { 
                 nomor_surat: nomorSurat, 
                 tanggal_surat: tanggalSurat, 
                 pengirim: pengirimSurat, 
+                tujuan: tujuanSurat,
                 perihal: perihalSurat
             };
 
-            // Jika ada file baru yang berhasil diunggah, tambahkan ke paket data
             if (filePath) {
                 dataYangDisimpan.file_url = filePath;
             }
 
             let dbError = null;
 
-            // Logika Percabangan: INSERT (Simpan Baru) vs UPDATE (Perbarui Data)
             if (editId) {
-                // Update data jika ada ID tersembunyi
                 const { error } = await supabaseClient
                     .from('surat_masuk')
                     .update(dataYangDisimpan)
                     .eq('id', editId);
                 dbError = error;
             } else {
-                // Insert data jika tidak ada ID tersembunyi (Surat baru)
                 const { error } = await supabaseClient
                     .from('surat_masuk')
                     .insert([dataYangDisimpan]);
@@ -196,7 +199,6 @@
                 document.getElementById('pesan').style.color = 'green';
                 document.getElementById('pesan').innerText = editId ? "Data surat berhasil diperbarui!" : "Surat baru berhasil disimpan!";
                 
-                // Bersihkan form dan kembali ke mode normal
                 batalEdit();
                 tampilkanSurat();
             }
@@ -211,8 +213,9 @@
                 .select('*')
                 .order('dibuat_pada', { ascending: false });
 
+            // Memungkinkan pencarian berdasarkan Tujuan juga
             if (keyword) {
-                query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%`);
+                query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%`);
             }
 
             const { data, error } = await query;
@@ -228,7 +231,7 @@
             tbody.innerHTML = ''; 
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Tidak ada data surat yang ditemukan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Tidak ada data surat yang ditemukan.</td></tr>`;
                 return;
             }
 
@@ -242,12 +245,14 @@
                     tombolFile = `<a href="${publicURLData.publicUrl}" target="_blank" class="btn-download">Buka PDF</a>`;
                 }
 
+                // Menambahkan sel tabel (td) untuk Tujuan
                 const baris = `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${surat.nomor_surat}</td>
                         <td>${surat.tanggal_surat}</td>
                         <td>${surat.pengirim}</td>
+                        <td>${surat.tujuan || '-'}</td>
                         <td>${surat.perihal}</td>
                         <td>${tombolFile}</td>
                         <td>
@@ -260,41 +265,37 @@
             });
         }
 
-        // --- 4. FUNGSI BARU: MENGAMBIL DATA KE FORM UNTUK DI-EDIT ---
+        // --- 4. FUNGSI MENGAMBIL DATA KE FORM UNTUK DI-EDIT ---
         function editSurat(idSurat) {
-            // Mencari data surat yang spesifik dari variabel pencarian terakhir
             const surat = dataSuratTerakhir.find(s => s.id === idSurat);
             
             if (surat) {
-                // Mengisi nilai form dengan data surat lama
                 document.getElementById('edit_id').value = surat.id;
                 document.getElementById('nomor_surat').value = surat.nomor_surat;
                 document.getElementById('tanggal_surat').value = surat.tanggal_surat;
                 document.getElementById('pengirim').value = surat.pengirim;
+                document.getElementById('tujuan').value = surat.tujuan || ''; // Mengisi nilai form Tujuan
                 document.getElementById('perihal').value = surat.perihal;
                 
-                // Mengubah tampilan tombol dan memberikan keterangan
                 document.getElementById('btn_simpan').innerText = "Perbarui Data Surat";
                 document.getElementById('btn_batal_edit').style.display = "inline-block";
                 document.getElementById('keterangan_file_edit').style.display = "block";
                 document.getElementById('pesan').innerText = "";
 
-                // Menggulir layar ke atas secara mulus
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        // --- 5. FUNGSI BARU: MEMBATALKAN MODE EDIT ---
+        // --- 5. FUNGSI MEMBATALKAN MODE EDIT ---
         function batalEdit() {
-            // Mengosongkan semua kolom form
             document.getElementById('edit_id').value = '';
             document.getElementById('nomor_surat').value = '';
             document.getElementById('tanggal_surat').value = '';
             document.getElementById('pengirim').value = '';
+            document.getElementById('tujuan').value = ''; // Mengosongkan form Tujuan
             document.getElementById('perihal').value = '';
             document.getElementById('file_surat').value = '';
 
-            // Mengembalikan tampilan tombol seperti semula
             document.getElementById('btn_simpan').innerText = "Simpan Data Surat";
             document.getElementById('btn_batal_edit').style.display = "none";
             document.getElementById('keterangan_file_edit').style.display = "none";
@@ -324,7 +325,14 @@
         function unduhLaporanExcel() {
             if (dataSuratTerakhir.length === 0) { alert("Tidak ada data untuk diunduh!"); return; }
             const dataUntukExcel = dataSuratTerakhir.map((surat, index) => {
-                return { "No": index + 1, "Nomor Surat": surat.nomor_surat, "Tanggal Surat": surat.tanggal_surat, "Instansi Pengirim": surat.pengirim, "Perihal": surat.perihal };
+                return { 
+                    "No": index + 1, 
+                    "Nomor Surat": surat.nomor_surat, 
+                    "Tanggal Surat": surat.tanggal_surat, 
+                    "Instansi Pengirim": surat.pengirim, 
+                    "Tujuan": surat.tujuan, // Ditambahkan ke Excel
+                    "Perihal": surat.perihal 
+                };
             });
             const worksheet = XLSX.utils.json_to_sheet(dataUntukExcel);
             const workbook = XLSX.utils.book_new();
@@ -342,8 +350,16 @@
             doc.setFontSize(11);
             doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
 
-            const namaKolom = [['No', 'Nomor Surat', 'Tanggal', 'Instansi Pengirim', 'Perihal']];
-            const barisData = dataSuratTerakhir.map((surat, index) => [ index + 1, surat.nomor_surat, surat.tanggal_surat, surat.pengirim, surat.perihal ]);
+            // Menambahkan kolom Tujuan ke laporan PDF
+            const namaKolom = [['No', 'Nomor Surat', 'Tanggal', 'Instansi Pengirim', 'Tujuan', 'Perihal']];
+            const barisData = dataSuratTerakhir.map((surat, index) => [ 
+                index + 1, 
+                surat.nomor_surat, 
+                surat.tanggal_surat, 
+                surat.pengirim, 
+                surat.tujuan || '-', 
+                surat.perihal 
+            ]);
 
             doc.autoTable({ startY: 35, head: namaKolom, body: barisData, theme: 'grid', headStyles: { fillColor: [0, 77, 153] } });
             doc.save("Laporan_Surat_Masuk.pdf");
