@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penerimaan Surat - Setum Polri</title>
-    <!-- Menambahkan library Supabase dari CDN -->
+    
+    <!-- Menambahkan library Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- BAGIAN BARU: Menambahkan library SheetJS untuk membuat file Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 850px; margin: auto; }
         .form-group { margin-bottom: 15px; }
@@ -15,7 +20,6 @@
         button:hover { background-color: #003366; }
         #pesan { margin-top: 15px; font-weight: bold; }
         
-        /* Gaya untuk tabel, tombol aksi, dan kotak pencarian */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #004d99; color: white; }
@@ -23,8 +27,10 @@
         .btn-hapus:hover { background-color: #990000; }
         .btn-download { background-color: #008000; padding: 5px 10px; font-size: 12px; color: white; text-decoration: none; display: inline-block; }
         .btn-download:hover { background-color: #006600; }
-        .search-box { margin-bottom: 15px; display: flex; gap: 10px; }
-        .search-box input { flex: 1; padding: 8px; }
+        .action-panel { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .action-panel input { flex: 1; padding: 8px; min-width: 200px; }
+        .btn-excel { background-color: #2e7d32; }
+        .btn-excel:hover { background-color: #1b5e20; }
     </style>
 </head>
 <body>
@@ -51,7 +57,6 @@
         <input type="text" id="perihal" required>
     </div>
 
-    <!-- BAGIAN BARU: Input untuk Unggah File PDF -->
     <div class="form-group">
         <label for="file_surat">Scan File Surat (Format PDF):</label>
         <input type="file" id="file_surat" accept=".pdf">
@@ -62,10 +67,11 @@
 
     <hr style="margin-top: 30px; margin-bottom: 30px;">
 
-    <h2>Daftar Surat Masuk</h2>
+    <h2>Daftar & Laporan Surat Masuk</h2>
 
-    <div class="search-box">
-        <input type="text" id="inputPencarian" placeholder="Cari berdasarkan nomor surat atau pengirim..." onkeyup="tampilkanSurat()">
+    <div class="action-panel">
+        <input type="text" id="inputPencarian" placeholder="Cari nomor surat atau pengirim..." onkeyup="tampilkanSurat()">
+        <button class="btn-excel" onclick="unduhLaporanExcel()">Unduh Laporan (Excel)</button>
     </div>
 
     <table>
@@ -81,7 +87,7 @@
             </tr>
         </thead>
         <tbody id="body_tabel">
-            <!-- Data dari database akan muncul di sini secara otomatis -->
+            <!-- Data akan muncul di sini otomatis -->
         </tbody>
     </table>
 
@@ -90,6 +96,8 @@
         const SUPABASE_URL = 'https://ttoavlqcwlvkykkmrlap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0b2F2bHFjd2x2a3lra21ybGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NjQ0MzAsImV4cCI6MjEwMDI0MDQzMH0.vGInPpN5mnG2nMS2HiZYdKvhmMOMIuus4M-qSAYlXOI';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let dataSuratTerakhir = [];
 
         // --- 2. FUNGSI MENYIMPAN SURAT & UPLOAD FILE ---
         async function simpanSurat() {
@@ -109,15 +117,12 @@
 
             let filePath = null;
 
-            // Jika petugas memilih file PDF untuk diunggah
             if (inputFile.files.length > 0) {
                 const file = inputFile.files[0];
-                // Membuat nama file yang unik berdasarkan waktu agar tidak bentrok
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${Date.now()}.${fileExt}`;
                 filePath = `${fileName}`;
 
-                // Mengunggah file ke Supabase Storage (bucket 'berkas_surat')
                 const { error: uploadError } = await supabaseClient.storage
                     .from('berkas_surat')
                     .upload(filePath, file);
@@ -130,8 +135,6 @@
                 }
             }
 
-            // Menyimpan data teks dan path file ke tabel 'surat_masuk'
-            // Catatan: Pastikan kolom 'file_url' sudah ada di tabel database Supabase-mu
             const { error: dbError } = await supabaseClient
                 .from('surat_masuk')
                 .insert([
@@ -152,7 +155,6 @@
                 document.getElementById('pesan').style.color = 'green';
                 document.getElementById('pesan').innerText = "Surat dan file berhasil disimpan!";
                 
-                // Kosongkan form
                 document.getElementById('nomor_surat').value = '';
                 document.getElementById('tanggal_surat').value = '';
                 document.getElementById('pengirim').value = '';
@@ -183,6 +185,8 @@
                 return;
             }
 
+            dataSuratTerakhir = data;
+
             const tbody = document.getElementById('body_tabel');
             tbody.innerHTML = ''; 
 
@@ -192,10 +196,8 @@
             }
 
             data.forEach((surat, index) => {
-                // Membuat tombol unduh jika file tersedia
                 let tombolFile = "Tidak ada file";
                 if (surat.file_url) {
-                    // Mendapatkan Public URL dari Supabase Storage
                     const { data: publicURLData } = supabaseClient.storage
                         .from('berkas_surat')
                         .getPublicUrl(surat.file_url);
@@ -220,19 +222,17 @@
             });
         }
 
-        // --- 4. FUNGSI MENGHAPUS SURAT & FILE TERKAIT ---
+        // --- 4. FUNGSI MENGHAPUS SURAT ---
         async function hapusSurat(idSurat, fileUrl) {
             const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data surat ini?");
             if (!konfirmasi) return;
 
-            // Jika ada file terlampir di storage, hapus juga file fisiknya
             if (fileUrl) {
                 await supabaseClient.storage
                     .from('berkas_surat')
                     .remove([fileUrl]);
             }
 
-            // Hapus data dari tabel database
             const { error } = await supabaseClient
                 .from('surat_masuk')
                 .delete()
@@ -247,7 +247,36 @@
             }
         }
 
-        // Jalankan fungsi tampilkanSurat saat halaman pertama kali dibuka
+        // --- 5. FUNGSI BARU: UNDUH LAPORAN EXCEL (.xlsx) ---
+        function unduhLaporanExcel() {
+            if (dataSuratTerakhir.length === 0) {
+                alert("Tidak ada data untuk diunduh!");
+                return;
+            }
+
+            // A. Menyiapkan data yang rapi khusus untuk Excel
+            const dataUntukExcel = dataSuratTerakhir.map((surat, index) => {
+                return {
+                    "No": index + 1,
+                    "Nomor Surat": surat.nomor_surat,
+                    "Tanggal Surat": surat.tanggal_surat,
+                    "Instansi Pengirim": surat.pengirim,
+                    "Perihal": surat.perihal
+                };
+            });
+
+            // B. Membuat lembar kerja (worksheet) baru dari data di atas
+            const worksheet = XLSX.utils.json_to_sheet(dataUntukExcel);
+
+            // C. Membuat buku kerja (workbook) dan memasukkan lembar kerja ke dalamnya
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Surat Masuk");
+
+            // D. Menyimpan dan mengunduh file Excel secara otomatis
+            XLSX.writeFile(workbook, "Laporan_Surat_Masuk.xlsx");
+        }
+
+        // Jalankan saat halaman dibuka
         tampilkanSurat();
     </script>
 </body>
