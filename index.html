@@ -88,7 +88,6 @@
                         <input type="text" id="nomor_surat" class="form-control" required>
                     </div>
 
-                    <!-- BAGIAN YANG DIUBAH: Menggunakan datetime-local -->
                     <div class="col-md-4 mb-3">
                         <label for="tanggal_diterima" class="form-label fw-bold">Tanggal & Jam Diterima:</label>
                         <input type="datetime-local" id="tanggal_diterima" class="form-control" required>
@@ -307,7 +306,6 @@
                                 <th style="width: 5%;">No</th>
                                 <th style="width: 15%;">Jenis Surat</th>
                                 <th style="width: 15%;">Nomor Surat</th>
-                                <!-- HEADER TABEL DIUBAH -->
                                 <th style="width: 12%;">Tanggal & Jam Diterima</th>
                                 <th style="width: 15%;">Pengirim</th>
                                 <th style="width: 13%;">Tujuan</th>
@@ -337,25 +335,40 @@
 
         let dataSuratTerakhir = [];
 
-        // --- FUNGSI BARU: MENGUBAH FORMAT TANGGAL DAN JAM (dd/mm/yyyy hh:mm) ---
+        // --- FUNGSI BARU: MENGATUR WAKTU OTOMATIS SAAT INI ---
+        function aturWaktuSekarang() {
+            const sekarang = new Date();
+            // Menyesuaikan zona waktu lokal komputer Anda agar terbaca tepat di kotak input
+            sekarang.setMinutes(sekarang.getMinutes() - sekarang.getTimezoneOffset());
+            const waktuLokal = sekarang.toISOString().slice(0, 16); 
+            document.getElementById('tanggal_diterima').value = waktuLokal;
+        }
+
+        // --- FUNGSI YANG DIPERBARUI: MENGUBAH FORMAT TANGGAL DAN JAM DENGAN AKURAT ---
         function formatTanggalWaktu(tanggalInput) {
             if (!tanggalInput) return '-';
             
-            // Ubah string dari database menjadi objek Date
-            const dateObj = new Date(tanggalInput);
-            
-            // Jika tanggal tidak valid, kembalikan nilai aslinya saja
-            if (isNaN(dateObj)) return tanggalInput;
-            
-            // Ambil masing-masing bagian, padStart digunakan untuk menambahkan angka '0' di depan jika angkanya satuan
-            const hari = String(dateObj.getDate()).padStart(2, '0');
-            const bulan = String(dateObj.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
-            const tahun = dateObj.getFullYear();
-            const jam = String(dateObj.getHours()).padStart(2, '0');
-            const menit = String(dateObj.getMinutes()).padStart(2, '0');
-            
-            // Gabungkan menjadi format dd/mm/yyyy hh:mm
-            return `${hari}/${bulan}/${tahun} ${jam}:${menit}`;
+            try {
+                // Hapus huruf 'Z' (penanda UTC) dan sisa detiknya agar sistem tidak menggeser jam secara otomatis
+                let teksBersih = tanggalInput.split('.')[0].replace('Z', '');
+                
+                // Pisahkan antara tanggal dan jam berdasarkan huruf 'T' (misal: 2026-07-22T14:30)
+                const bagian = teksBersih.split('T');
+                
+                if (bagian.length === 2) {
+                    const tanggal = bagian[0].split('-'); // Array: [2026, 07, 22]
+                    const jam = bagian[1].substring(0, 5); // Ambil 5 karakter pertama: 14:30
+                    
+                    if (tanggal.length === 3) {
+                        // Gabungkan menjadi format dd/mm/yyyy hh:mm
+                        return `${tanggal[2]}/${tanggal[1]}/${tanggal[0]} ${jam}`;
+                    }
+                }
+                
+                return tanggalInput; // Kembalikan nilai asli jika format tidak dikenali
+            } catch (error) {
+                return tanggalInput;
+            }
         }
 
         // --- FUNGSI MENGATUR MUNCULNYA INPUT MANUAL PENGIRIM ---
@@ -483,13 +496,12 @@
                 query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
             }
 
-            // Filter ini tetap bisa bekerja karena inputnya tetap merujuk ke tanggal
             if (tanggalMulai) {
                 query = query.gte('tanggal_diterima', tanggalMulai);
             }
 
             if (tanggalSampai) {
-                query = query.lte('tanggal_diterima', tanggalSampai + 'T23:59:59'); // Mencakup sampai akhir hari tersebut
+                query = query.lte('tanggal_diterima', tanggalSampai + 'T23:59:59'); 
             }
 
             const { data, error } = await query;
@@ -515,7 +527,6 @@
                         <td class="text-center">${index + 1}</td>
                         <td>${surat.jenis_surat || '-'}</td>
                         <td>${surat.nomor_surat}</td>
-                        <!-- BAGIAN YANG DIUBAH: Menggunakan fungsi formatTanggalWaktu -->
                         <td class="text-center">${formatTanggalWaktu(surat.tanggal_diterima)}</td>
                         <td>${surat.pengirim}</td>
                         <td>${surat.tujuan || '-'}</td>
@@ -539,11 +550,13 @@
                 document.getElementById('jenis_surat').value = surat.jenis_surat || '';
                 document.getElementById('nomor_surat').value = surat.nomor_surat;
                 
-                // Mencegah error jika data dari Supabase memiliki format detik atau mili-detik tambahan. 
-                // Input datetime-local hanya menerima format panjang 16 karakter (YYYY-MM-DDTHH:mm).
+                // Mencegah pergeseran timezone saat data dimasukkan kembali ke form input
                 let tanggalDiterimaValue = surat.tanggal_diterima || '';
-                if (tanggalDiterimaValue.length > 16) {
-                    tanggalDiterimaValue = tanggalDiterimaValue.substring(0, 16);
+                if (tanggalDiterimaValue) {
+                    tanggalDiterimaValue = tanggalDiterimaValue.split('.')[0].replace('Z', '');
+                    if (tanggalDiterimaValue.length > 16) {
+                        tanggalDiterimaValue = tanggalDiterimaValue.substring(0, 16);
+                    }
                 }
                 document.getElementById('tanggal_diterima').value = tanggalDiterimaValue;
                 
@@ -582,12 +595,14 @@
             document.getElementById('edit_id').value = '';
             document.getElementById('jenis_surat').value = '';
             document.getElementById('nomor_surat').value = '';
-            document.getElementById('tanggal_diterima').value = '';
             document.getElementById('pengirim').value = '';
             document.getElementById('pengirim_lain').value = '';
             document.getElementById('wrapper_pengirim_lain').classList.add('d-none');
             document.getElementById('tujuan').value = '';
             document.getElementById('perihal').value = '';
+
+            // Kembalikan kotak input tanggal menjadi waktu saat ini
+            aturWaktuSekarang();
 
             const btnSimpan = document.getElementById('btn_simpan');
             btnSimpan.innerText = "Simpan Data Surat";
@@ -620,7 +635,6 @@
                     "No": index + 1, 
                     "Jenis Surat": surat.jenis_surat,
                     "Nomor Surat": surat.nomor_surat, 
-                    // FORMAT EXCEL MENGGUNAKAN TANGGAL BARU
                     "Tanggal & Jam Diterima": formatTanggalWaktu(surat.tanggal_diterima), 
                     "Pengirim": surat.pengirim, 
                     "Tujuan": surat.tujuan, 
@@ -643,13 +657,11 @@
             doc.setFontSize(11);
             doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
 
-            // HEADER PDF DIUBAH
             const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal & Jam Diterima', 'Pengirim', 'Tujuan', 'Perihal']];
             const barisData = dataSuratTerakhir.map((surat, index) => [ 
                 index + 1, 
                 surat.jenis_surat || '-',
                 surat.nomor_surat, 
-                // FORMAT PDF MENGGUNAKAN TANGGAL BARU
                 formatTanggalWaktu(surat.tanggal_diterima), 
                 surat.pengirim, 
                 surat.tujuan || '-', 
@@ -660,7 +672,8 @@
             doc.save("Laporan_Surat_Masuk.pdf");
         }
 
-        // Jalankan saat halaman dibuka
+        // Jalankan fungsi otomatis saat halaman pertama kali dibuka
+        aturWaktuSekarang();
         tampilkanSurat();
     </script>
 </body>
