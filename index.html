@@ -37,7 +37,6 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="jenis_surat" class="form-label fw-bold">Jenis Surat:</label>
-                        <!-- Mengganti input teks menjadi dropdown (select) -->
                         <select id="jenis_surat" class="form-select" required>
                             <option value="" disabled selected>-- Pilih Jenis Surat --</option>
                             <option value="Amanat">Amanat</option>
@@ -98,7 +97,7 @@
                 <!-- BARIS 2: Pengirim dan Tujuan -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="pengirim" class="form-label fw-bold">Pengirim:</label>
+                        <label for="pengirim" class="form-label fw-bold">Instansi Pengirim:</label>
                         <input type="text" id="pengirim" class="form-control" required>
                     </div>
 
@@ -130,11 +129,24 @@
             <div class="card-body">
                 
                 <!-- Panel Pencarian dan Tombol Ekspor -->
-                <div class="row g-2 mb-3">
-                    <div class="col-md-6">
-                        <input type="text" id="inputPencarian" class="form-control" placeholder="Cari nomor surat, jenis, pengirim, atau tujuan..." onkeyup="tampilkanSurat()">
+                <!-- BARU: Penambahan input rentang tanggal -->
+                <div class="row g-2 mb-3 align-items-center">
+                    <div class="col-md-3">
+                        <input type="text" id="inputPencarian" class="form-control" placeholder="Cari teks..." onkeyup="tampilkanSurat()">
                     </div>
-                    <div class="col-md-6 text-md-end">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">Dari</span>
+                            <input type="date" id="filter_tanggal_mulai" class="form-control" onchange="tampilkanSurat()">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">Sampai</span>
+                            <input type="date" id="filter_tanggal_sampai" class="form-control" onchange="tampilkanSurat()">
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-md-end">
                         <button class="btn btn-success btn-sm me-1" onclick="unduhLaporanExcel()">📊 Unduh Excel</button>
                         <button class="btn btn-danger btn-sm" onclick="unduhLaporanPDF()">📑 Unduh PDF</button>
                     </div>
@@ -187,7 +199,6 @@
             const tujuanSurat = document.getElementById('tujuan').value;
             const perihalSurat = document.getElementById('perihal').value;
 
-            // Validasi: Memastikan dropdown jenis surat telah dipilih (bukan opsi default kosong)
             if(!jenisSurat || !nomorSurat || !tanggalDiterima || !pengirimSurat || !tujuanSurat || !perihalSurat) {
                 alert("Mohon lengkapi semua data teks, termasuk memilih Jenis Surat!");
                 return;
@@ -237,14 +248,27 @@
         // --- 3. FUNGSI MENAMPILKAN DAN MENCARI SURAT ---
         async function tampilkanSurat() {
             const keyword = document.getElementById('inputPencarian').value;
+            const tanggalMulai = document.getElementById('filter_tanggal_mulai').value;
+            const tanggalSampai = document.getElementById('filter_tanggal_sampai').value;
 
             let query = supabaseClient
                 .from('surat_masuk')
                 .select('*')
                 .order('dibuat_pada', { ascending: false });
 
+            // Filter teks
             if (keyword) {
                 query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
+            }
+
+            // BARU: Filter Tanggal Mulai (Lebih besar atau sama dengan)
+            if (tanggalMulai) {
+                query = query.gte('tanggal_diterima', tanggalMulai);
+            }
+
+            // BARU: Filter Tanggal Sampai (Lebih kecil atau sama dengan)
+            if (tanggalSampai) {
+                query = query.lte('tanggal_diterima', tanggalSampai);
             }
 
             const { data, error } = await query;
@@ -290,7 +314,6 @@
             
             if (surat) {
                 document.getElementById('edit_id').value = surat.id;
-                // JS akan otomatis memilih <option> yang nilai value-nya sama dengan data dari database
                 document.getElementById('jenis_surat').value = surat.jenis_surat || '';
                 document.getElementById('nomor_surat').value = surat.nomor_surat;
                 document.getElementById('tanggal_diterima').value = surat.tanggal_diterima || '';
@@ -312,7 +335,7 @@
         // --- 5. FUNGSI MEMBATALKAN MODE EDIT ---
         function batalEdit() {
             document.getElementById('edit_id').value = '';
-            document.getElementById('jenis_surat').value = ''; // Mengembalikan dropdown ke nilai default (kosong)
+            document.getElementById('jenis_surat').value = '';
             document.getElementById('nomor_surat').value = '';
             document.getElementById('tanggal_diterima').value = '';
             document.getElementById('pengirim').value = '';
