@@ -31,9 +31,11 @@
                 <h5 class="mb-0 text-primary fw-bold">Formulir Penerimaan Surat</h5>
             </div>
             <div class="card-body">
+                <!-- Elemen tersembunyi untuk ID dan Waktu -->
                 <input type="hidden" id="edit_id">
+                <input type="hidden" id="waktu_tersembunyi">
 
-                <!-- BARIS 1: Jenis, Nomor, Tanggal & Jam -->
+                <!-- BARIS 1: Jenis, Nomor, Tanggal -->
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="jenis_surat" class="form-label fw-bold">Jenis Surat:</label>
@@ -89,8 +91,9 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label for="tanggal_diterima" class="form-label fw-bold">Tanggal & Jam Diterima:</label>
-                        <input type="datetime-local" id="tanggal_diterima" class="form-control" required>
+                        <label for="tanggal_diterima" class="form-label fw-bold">Tanggal Diterima:</label>
+                        <!-- Dikembalikan ke type="date" agar hanya memilih tanggal -->
+                        <input type="date" id="tanggal_diterima" class="form-control" required>
                     </div>
                 </div>
 
@@ -279,7 +282,6 @@
                     <div class="col-md-3">
                         <input type="text" id="inputPencarian" class="form-control" placeholder="Cari teks..." onkeyup="tampilkanSurat()">
                     </div>
-                    <!-- Untuk filter pencarian, tetap menggunakan date (tanggal) agar lebih mudah dicari per hari -->
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-text bg-white">Dari</span>
@@ -335,37 +337,32 @@
 
         let dataSuratTerakhir = [];
 
-        // --- FUNGSI BARU: MENGATUR WAKTU OTOMATIS SAAT INI ---
-        function aturWaktuSekarang() {
+        // --- FUNGSI BARU: MENGATUR TANGGAL SAAT INI (Tanpa Jam di Kotak Input) ---
+        function aturTanggalSekarang() {
             const sekarang = new Date();
-            // Menyesuaikan zona waktu lokal komputer Anda agar terbaca tepat di kotak input
             sekarang.setMinutes(sekarang.getMinutes() - sekarang.getTimezoneOffset());
-            const waktuLokal = sekarang.toISOString().slice(0, 16); 
-            document.getElementById('tanggal_diterima').value = waktuLokal;
+            const tanggalLokal = sekarang.toISOString().slice(0, 10); // Format YYYY-MM-DD
+            document.getElementById('tanggal_diterima').value = tanggalLokal;
+            document.getElementById('waktu_tersembunyi').value = ''; // Kosongkan waktu tersembunyi
         }
 
-        // --- FUNGSI YANG DIPERBARUI: MENGUBAH FORMAT TANGGAL DAN JAM DENGAN AKURAT ---
+        // --- FUNGSI MENGUBAH FORMAT TANGGAL DAN JAM DENGAN AKURAT ---
         function formatTanggalWaktu(tanggalInput) {
             if (!tanggalInput) return '-';
             
             try {
-                // Hapus huruf 'Z' (penanda UTC) dan sisa detiknya agar sistem tidak menggeser jam secara otomatis
                 let teksBersih = tanggalInput.split('.')[0].replace('Z', '');
-                
-                // Pisahkan antara tanggal dan jam berdasarkan huruf 'T' (misal: 2026-07-22T14:30)
                 const bagian = teksBersih.split('T');
                 
                 if (bagian.length === 2) {
-                    const tanggal = bagian[0].split('-'); // Array: [2026, 07, 22]
-                    const jam = bagian[1].substring(0, 5); // Ambil 5 karakter pertama: 14:30
+                    const tanggal = bagian[0].split('-'); 
+                    const jam = bagian[1].substring(0, 5); 
                     
                     if (tanggal.length === 3) {
-                        // Gabungkan menjadi format dd/mm/yyyy hh:mm
                         return `${tanggal[2]}/${tanggal[1]}/${tanggal[0]} ${jam}`;
                     }
                 }
-                
-                return tanggalInput; // Kembalikan nilai asli jika format tidak dikenali
+                return tanggalInput; 
             } catch (error) {
                 return tanggalInput;
             }
@@ -391,7 +388,7 @@
             const editId = document.getElementById('edit_id').value;
             const jenisSurat = document.getElementById('jenis_surat').value;
             const nomorSurat = document.getElementById('nomor_surat').value;
-            const tanggalDiterima = document.getElementById('tanggal_diterima').value;
+            const tanggalInput = document.getElementById('tanggal_diterima').value;
             const pilihanPengirim = document.getElementById('pengirim').value;
             const inputPengirimLain = document.getElementById('pengirim_lain').value;
             const tujuanSurat = document.getElementById('tujuan').value;
@@ -400,6 +397,21 @@
             let pengirimFinal = pilihanPengirim;
             if (pilihanPengirim === "Instansi Luar") {
                 pengirimFinal = inputPengirimLain;
+            }
+
+            // GABUNGKAN TANGGAL (DARI INPUT) DAN JAM (DARI LATAR BELAKANG)
+            let waktuLama = document.getElementById('waktu_tersembunyi').value;
+            let tanggalFinal = tanggalInput;
+
+            if (tanggalInput) {
+                if (!waktuLama) {
+                    // Jika membuat data baru, otomatis ambil waktu saat tombol ditekan
+                    const sekarang = new Date();
+                    const jam = String(sekarang.getHours()).padStart(2, '0');
+                    const menit = String(sekarang.getMinutes()).padStart(2, '0');
+                    waktuLama = `${jam}:${menit}`;
+                }
+                tanggalFinal = `${tanggalInput}T${waktuLama}`;
             }
 
             // --- VALIDASI SPESIFIK SATU PER SATU ---
@@ -413,8 +425,8 @@
                 document.getElementById('nomor_surat').focus();
                 return;
             }
-            if (!tanggalDiterima) {
-                alert("Peringatan: Tanggal & Jam Diterima belum diisi!");
+            if (!tanggalInput) {
+                alert("Peringatan: Tanggal Diterima belum dipilih!");
                 document.getElementById('tanggal_diterima').focus();
                 return;
             }
@@ -447,7 +459,7 @@
             let dataYangDisimpan = { 
                 jenis_surat: jenisSurat,
                 nomor_surat: nomorSurat, 
-                tanggal_diterima: tanggalDiterima, 
+                tanggal_diterima: tanggalFinal, 
                 pengirim: pengirimFinal, 
                 tujuan: tujuanSurat,
                 perihal: perihalSurat
@@ -550,15 +562,21 @@
                 document.getElementById('jenis_surat').value = surat.jenis_surat || '';
                 document.getElementById('nomor_surat').value = surat.nomor_surat;
                 
-                // Mencegah pergeseran timezone saat data dimasukkan kembali ke form input
+                // Mencegah pergeseran timezone dan memisahkan tanggal dengan jam
                 let tanggalDiterimaValue = surat.tanggal_diterima || '';
                 if (tanggalDiterimaValue) {
                     tanggalDiterimaValue = tanggalDiterimaValue.split('.')[0].replace('Z', '');
-                    if (tanggalDiterimaValue.length > 16) {
-                        tanggalDiterimaValue = tanggalDiterimaValue.substring(0, 16);
-                    }
+                    const parts = tanggalDiterimaValue.split('T');
+                    
+                    // Masukkan tanggal ke kotak input yang terlihat
+                    document.getElementById('tanggal_diterima').value = parts[0] || '';
+                    
+                    // Simpan jam ke kotak input tersembunyi
+                    document.getElementById('waktu_tersembunyi').value = parts[1] ? parts[1].substring(0, 5) : '';
+                } else {
+                    document.getElementById('tanggal_diterima').value = '';
+                    document.getElementById('waktu_tersembunyi').value = '';
                 }
-                document.getElementById('tanggal_diterima').value = tanggalDiterimaValue;
                 
                 const selectPengirim = document.getElementById('pengirim');
                 const inputPengirimLain = document.getElementById('pengirim_lain');
@@ -601,8 +619,8 @@
             document.getElementById('tujuan').value = '';
             document.getElementById('perihal').value = '';
 
-            // Kembalikan kotak input tanggal menjadi waktu saat ini
-            aturWaktuSekarang();
+            // Mengembalikan input tanggal menjadi kalender hari ini & mereset jam tersembunyi
+            aturTanggalSekarang();
 
             const btnSimpan = document.getElementById('btn_simpan');
             btnSimpan.innerText = "Simpan Data Surat";
@@ -673,7 +691,7 @@
         }
 
         // Jalankan fungsi otomatis saat halaman pertama kali dibuka
-        aturWaktuSekarang();
+        aturTanggalSekarang();
         tampilkanSurat();
     </script>
 </body>
