@@ -634,27 +634,27 @@
             const btnKeluar = document.getElementById('btn_menu_keluar');
 
             if (menu === 'masuk') {
-                // Tampilkan section masuk, sembunyikan keluar
+                // Tampilkan section surat masuk, sembunyikan surat keluar
                 sectionMasuk.classList.remove('d-none');
                 sectionKeluar.classList.add('d-none');
         
-                // Atur tombol Masuk menjadi aktif (biru)
+                // Aktifkan tombol surat masuk dengan background biru
                 btnMasuk.classList.add('active', 'bg-primary');
                 btnMasuk.classList.remove('bg-success');
         
-                // Bersihkan status aktif dan warna hijau dari tombol Keluar
+                // Nonaktifkan status aktif dan bersihkan background dari tombol surat keluar
                 btnKeluar.classList.remove('active', 'bg-success', 'bg-primary');
         
             } else if (menu === 'keluar') {
-            // Tampilkan section keluar, sembunyikan masuk
+                // Tampilkan section surat keluar, sembunyikan surat masuk
                 sectionMasuk.classList.add('d-none');
                 sectionKeluar.classList.remove('d-none');
         
-                // Atur tombol Keluar menjadi aktif (hijau)
-                btnKeluar.classList.add('active', 'bg-success');
-                btnKeluar.classList.remove('bg-primary');
+                // Aktifkan tombol surat keluar TANPA background hijau (hanya class 'active')
+                btnKeluar.classList.add('active');
+                btnKeluar.classList.remove('bg-success', 'bg-primary');
         
-                // Bersihkan status aktif dan warna biru dari tombol Masuk
+                // Nonaktifkan status aktif dan bersihkan background dari tombol surat masuk
                 btnMasuk.classList.remove('active', 'bg-primary', 'bg-success');
             }
         }
