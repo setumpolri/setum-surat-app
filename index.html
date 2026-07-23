@@ -891,21 +891,22 @@
             sectionKeluar.classList.add('d-none');
             sectionUser.classList.add('d-none');
 
-            btnMasuk.classList.remove('active', 'bg-primary');
-            btnKeluar.classList.remove('active', 'bg-success', 'bg-primary');
-            if(btnUser) btnUser.classList.remove('active', 'bg-dark', 'bg-primary');
+            // Menghapus semua kelas warna background pada tombol menu
+            btnMasuk.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
+            btnKeluar.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
+            if(btnUser) btnUser.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
 
             if (menu === 'masuk') {
                 sectionMasuk.classList.remove('d-none');
-                btnMasuk.classList.add('active', 'bg-primary');
+                btnMasuk.classList.add('active'); // Hanya status active tanpa warna latar khusus
                 if (simpanKeStorage) localStorage.setItem('menuAktif', 'masuk');
             } else if (menu === 'keluar') {
                 sectionKeluar.classList.remove('d-none');
-                btnKeluar.classList.add('active', 'bg-success');
+                btnKeluar.classList.add('active'); // Hanya status active tanpa warna latar khusus
                 if (simpanKeStorage) localStorage.setItem('menuAktif', 'keluar');
             } else if (menu === 'user') {
                 sectionUser.classList.remove('d-none');
-                btnUser.classList.add('active', 'bg-dark');
+                btnUser.classList.add('active'); // Hanya status active tanpa warna latar khusus
                 if (simpanKeStorage) localStorage.setItem('menuAktif', 'user');
                 tampilkanDaftarUser();
             }
