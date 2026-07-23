@@ -784,7 +784,8 @@
             document.querySelectorAll('.searchable-select').forEach((el) => {
                 let instance = new TomSelect(el, {
                     create: false,
-                    sortField: false 
+                    sortField: false,
+                    maxOptions: null // Menghapus batasan jumlah maksimal opsi yang ditampilkan
                 });
                 tomSelectInstances[el.id] = instance;
             });
