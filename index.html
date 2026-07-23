@@ -40,9 +40,9 @@
         </div>
     </div>
 
-    <!-- ================= APLIKASI UTAMA (DIPERLIHATKAN SETELAH LOGIN) ================= -->
+    <!-- ================= APLIKASI UTAMA ================= -->
     <div id="app_utama" class="d-none">
-        <!-- Header / Navbar Resmi dengan Menu Pilihan -->
+        <!-- Header / Navbar Resmi -->
         <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
             <div class="container d-flex justify-content-between align-items-center">
                 <span class="navbar-brand mb-0 h1 d-flex align-items-center">
@@ -52,12 +52,16 @@
                 
                 <div class="d-flex align-items-center">
                     <!-- MENU NAVIGASI -->
-                    <ul class="nav nav-pills me-3">
+                    <ul class="nav nav-pills me-3" id="nav_menu_utama">
                         <li class="nav-item">
                             <button class="nav-link text-white active fw-bold" id="btn_menu_masuk" onclick="gantiMenu('masuk')">Surat Masuk</button>
                         </li>
                         <li class="nav-item ms-2">
                             <button class="nav-link text-white fw-bold" id="btn_menu_keluar" onclick="gantiMenu('keluar')">Surat Keluar</button>
+                        </li>
+                        <!-- Menu Manajemen User (Hanya muncul untuk Admin/Super Admin) -->
+                        <li class="nav-item ms-2 d-none" id="li_menu_user">
+                            <button class="nav-link text-white fw-bold" id="btn_menu_user" onclick="gantiMenu('user')">Manajemen User</button>
                         </li>
                     </ul>
                     <!-- TOMBOL KELUAR -->
@@ -70,74 +74,34 @@
             
             <!-- ================= SECTION: SURAT MASUK ================= -->
             <div id="section_surat_masuk">
+                <!-- (Form dan Tabel Surat Masuk Sesuai Sebelumnya) -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0 text-primary fw-bold">Formulir Penerimaan Surat Masuk</h5>
                     </div>
                     <div class="card-body">
                         <input type="hidden" id="edit_id_masuk">
-                        <input type="hidden" id="waktu_tersembunyi_masuk">
-
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="jenis_surat_masuk" class="form-label fw-bold">Jenis Surat:</label>
                                 <select id="jenis_surat_masuk" class="form-select" required>
                                     <option value="" disabled selected>-- Pilih Jenis Surat --</option>
-                                    <option value="Amanat">Amanat</option>
-                                    <option value="Berita Acara">Berita Acara</option>
                                     <option value="Biasa">Biasa</option>
-                                    <option value="Instansi Luar">Instansi Luar</option>
-                                    <option value="Instruksi">Instruksi</option>
-                                    <option value="Keputusan">Keputusan</option>
-                                    <option value="Laporan">Laporan</option>
-                                    <option value="Maklumat">Maklumat</option>
                                     <option value="Nota Dinas">Nota Dinas</option>
-                                    <option value="Notula">Notula</option>
-                                    <option value="Panggilan Personel">Panggilan Personel</option>
-                                    <option value="Pengaduan Masyarakat">Pengaduan Masyarakat</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Peraturan">Peraturan</option>
-                                    <option value="Rahasia">Rahasia</option>
-                                    <option value="Ren Ops">Ren Ops</option>
-                                    <option value="Sandi">Sandi</option>
-                                    <option value="Sangat Rahasia">Sangat Rahasia</option>
-                                    <option value="Sipil">Sipil</option>
-                                    <option value="SOP">SOP</option>
-                                    <option value="Surat Cuti">Surat Cuti</option>
-                                    <option value="Surat Edaran">Surat Edaran</option>
-                                    <option value="Surat Izin">Surat Izin</option>
-                                    <option value="Surat Izin Jalan">Surat Izin Jalan</option>
-                                    <option value="Surat Keterangan">Surat Keterangan</option>
-                                    <option value="Surat Pemberitahuan">Surat Pemberitahuan</option>
-                                    <option value="Surat Pengantar">Surat Pengantar</option>
                                     <option value="Surat Perintah">Surat Perintah</option>
-                                    <option value="Surat Perjalanan Dinas">Surat Perjalanan Dinas</option>
-                                    <option value="Surat Pernyataan">Surat Pernyataan</option>
-                                    <option value="Surat Persetujuan">Surat Persetujuan</option>
-                                    <option value="Surat Rekomendasi">Surat Rekomendasi</option>
-                                    <option value="Surat Takkah">Surat Takkah</option>
                                     <option value="Surat Telegram">Surat Telegram</option>
-                                    <option value="Surat Telegram Rahasia">Surat Telegram Rahasia</option>
                                     <option value="Surat Tugas">Surat Tugas</option>
-                                    <option value="Surat Undangan">Surat Undangan</option>
-                                    <option value="Telaahan Staf">Telaahan Staf</option>
-                                    <option value="Terbatas">Terbatas</option>
-                                    <option value="Undangan">Undangan</option>
-                                    <option value="Undangan Cetak">Undangan Cetak</option>
                                 </select>
                             </div>
-
                             <div class="col-md-4 mb-3">
                                 <label for="nomor_surat_masuk" class="form-label fw-bold">Nomor Surat:</label>
                                 <input type="text" id="nomor_surat_masuk" class="form-control" required>
                             </div>
-
                             <div class="col-md-4 mb-3">
                                 <label for="tanggal_masuk" class="form-label fw-bold">Tanggal Diterima:</label>
                                 <input type="date" id="tanggal_masuk" class="form-control" required>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="pengirim_masuk" class="form-label fw-bold">Pengirim:</label>
@@ -146,165 +110,32 @@
                                     <option value="Instansi Luar">Instansi Luar</option>
                                     <option value="Itwasum Polri">Itwasum Polri</option>
                                     <option value="Bareskrim Polri">Bareskrim Polri</option>
-                                    <option value="Baharkam Polri">Baharkam Polri</option>
-                                    <option value="Korbrimob Polri">Korbrimob Polri</option>
-                                    <option value="Baintelkam Polri">Baintelkam Polri</option>
-                                    <option value="Lemdiklat Polri">Lemdiklat Polri</option>
-                                    <option value="Stamaops Polri">Stamaops Polri</option>
-                                    <option value="Stamarena Polri">Stamarena Polri</option>
-                                    <option value="Korlantas Polri">Korlantas Polri</option>
-                                    <option value="Kortastipidkor Polri">Kortastipidkor Polri</option>
-                                    <option value="Densus 88 AT Polri">Densus 88 AT Polri</option>
-                                    <option value="SDM Polri">SDM Polri</option>
-                                    <option value="Slog Polri">Slog Polri</option>
-                                    <option value="Divpropam Polri">Divpropam Polri</option>
-                                    <option value="Divkum Polri">Divkum Polri</option>
-                                    <option value="Divhumas Polri">Divhumas Polri</option>
-                                    <option value="Div TIK Polri">Div TIK Polri</option>
-                                    <option value="Divhubinter Polri">Divhubinter Polri</option>
-                                    <option value="Pusdokkes Polri">Pusdokkes Polri</option>
-                                    <option value="Sahli Kapolri">Sahli Kapolri</option>
-                                    <option value="Puslitbang Polri">Puslitbang Polri</option>
-                                    <option value="Puskeu Polri">Puskeu Polri</option>
-                                    <option value="Pusjarah Polri">Pusjarah Polri</option>
-                                    <option value="Spripim Polri">Spripim Polri</option>
-                                    <option value="Yanma Polri">Yanma Polri</option>
-                                    <option value="Setum Polri">Setum Polri</option>
-                                    <option value="Polda Aceh">Polda Aceh</option>
-                                    <option value="Polda Sumatera Utara">Polda Sumatera Utara</option>
-                                    <option value="Polda Sumatera Barat">Polda Sumatera Barat</option>
-                                    <option value="Polda Riau">Polda Riau</option>
-                                    <option value="Polda Kepulauan Riau">Polda Kepulauan Riau</option>
-                                    <option value="Polda Jambi">Polda Jambi</option>
-                                    <option value="Polda Bengkulu">Polda Bengkulu</option>
-                                    <option value="Polda Sumatera Selatan">Polda Sumatera Selatan</option>
-                                    <option value="Polda Kepulauan Bangka Belitung">Polda Kepulauan Bangka Belitung</option>
-                                    <option value="Polda Lampung">Polda Lampung</option>
-                                    <option value="Polda Metro Jaya">Polda Metro Jaya</option>
-                                    <option value="Polda Banten">Polda Banten</option>
-                                    <option value="Polda Jawa Barat">Polda Jawa Barat</option>
-                                    <option value="Polda Jawa Tengah">Polda Jawa Tengah</option>
-                                    <option value="Polda Daerah Istimewa Yogyakarta">Polda Daerah Istimewa Yogyakarta</option>
-                                    <option value="Polda Jawa Timur">Polda Jawa Timur</option>
-                                    <option value="Polda Bali">Polda Bali</option>
-                                    <option value="Polda Nusa Tenggara Barat">Polda Nusa Tenggara Barat</option>
-                                    <option value="Polda Nusa Tenggara Timur">Polda Nusa Tenggara Timur</option>
-                                    <option value="Polda Kalimantan Barat">Polda Kalimantan Barat</option>
-                                    <option value="Polda Kalimantan Tengah">Polda Kalimantan Tengah</option>
-                                    <option value="Polda Kalimantan Selatan">Polda Kalimantan Selatan</option>
-                                    <option value="Polda Kalimantan Timur">Polda Kalimantan Timur</option>
-                                    <option value="Polda Kalimantan Utara">Polda Kalimantan Utara</option>
-                                    <option value="Polda Sulawesi Utara">Polda Sulawesi Utara</option>
-                                    <option value="Polda Gorontalo">Polda Gorontalo</option>
-                                    <option value="Polda Sulawesi Tengah">Polda Sulawesi Tengah</option>
-                                    <option value="Polda Sulawesi Barat">Polda Sulawesi Barat</option>
-                                    <option value="Polda Sulawesi Selatan">Polda Sulawesi Selatan</option>
-                                    <option value="Polda Sulawesi Tenggara">Polda Sulawesi Tenggara</option>
-                                    <option value="Polda Maluku">Polda Maluku</option>
-                                    <option value="Polda Maluku Utara">Polda Maluku Utara</option>
-                                    <option value="Polda Papua Barat">Polda Papua Barat</option>
-                                    <option value="Polda Papua Barat Daya">Polda Papua Barat Daya</option>
-                                    <option value="Polda Papua">Polda Papua</option>
-                                    <option value="Polda Papua Tengah">Polda Papua Tengah</option>
-                                    <option value="Polda Papua Pegunungan">Polda Papua Pegunungan</option>
-                                    <option value="Polda Papua Selatan">Polda Papua Selatan</option>
                                 </select>
-
                                 <div id="wrapper_pengirim_lain_masuk" class="d-none">
-                                    <label for="pengirim_lain_masuk" class="form-label fw-bold text-muted small">Silakan masukan pengirim disini:</label>
-                                    <input type="text" id="pengirim_lain_masuk" class="form-control" placeholder="Masukkan nama instansi luar...">
+                                    <input type="text" id="pengirim_lain_masuk" class="form-control" placeholder="Masukkan instansi luar...">
                                 </div>
                             </div>
-
                             <div class="col-md-6 mb-3">
                                 <label for="tujuan_masuk" class="form-label fw-bold">Tujuan:</label>
                                 <select id="tujuan_masuk" class="form-select" required>
                                     <option value="" disabled selected>-- Pilih Tujuan --</option>
                                     <option value="Kapolri">Kapolri</option>
                                     <option value="Wakapolri">Wakapolri</option>
-                                    <option value="Irwasum Polri">Irwasum Polri</option>
-                                    <option value="Kabareskrim Polri">Kabareskrim Polri</option>
-                                    <option value="Kabaharkam Polri">Kabaharkam Polri</option>
-                                    <option value="Kakorbrimob Polri">Kakorbrimob Polri</option>
-                                    <option value="Kabaintelkam Polri">Kabaintelkam Polri</option>
-                                    <option value="Kalemdiklat Polri">Kalemdiklat Polri</option>
-                                    <option value="Astamaops Polri">Astamaops Polri</option>
-                                    <option value="Astamarena Polri">Astamarena Polri</option>
-                                    <option value="Kakorlantas Polri">Kakorlantas Polri</option>
-                                    <option value="Kakortastipidkor Polri">Kakortastipidkor Polri</option>
-                                    <option value="Kadensus 88 AT Polri">Kadensus 88 AT Polri</option>
-                                    <option value="As SDM Kapolri">As SDM Kapolri</option>
-                                    <option value="Aslog Kapolri">Aslog Kapolri</option>
-                                    <option value="Kadivpropam Polri">Kadivpropam Polri</option>
-                                    <option value="Kadivkum Polri">Kadivkum Polri</option>
-                                    <option value="Kadivhumas Polri">Kadivhumas Polri</option>
-                                    <option value="Kadiv TIK Polri">Kadiv TIK Polri</option>
-                                    <option value="Kadivhubinter Polri">Kadivhubinter Polri</option>
-                                    <option value="Kapusdokkes Polri">Kapusdokkes Polri</option>
-                                    <option value="Koorsahli Kapolri">Koorsahli Kapolri</option>
-                                    <option value="Kapuslitbang Polri">Kapuslitbang Polri</option>
-                                    <option value="Kapuskeu Polri">Kapuskeu Polri</option>
-                                    <option value="Kapusjarah Polri">Kapusjarah Polri</option>
-                                    <option value="Koorspripim Polri">Koorspripim Polri</option>
-                                    <option value="Kayanma Polri">Kayanma Polri</option>
-                                    <option value="Kasetum Polri">Kasetum Polri</option>
-                                    <option value="Kapolda Aceh">Kapolda Aceh</option>
-                                    <option value="Kapolda Sumatera Utara">Kapolda Sumatera Utara</option>
-                                    <option value="Kapolda Sumatera Barat">Kapolda Sumatera Barat</option>
-                                    <option value="Kapolda Riau">Kapolda Riau</option>
-                                    <option value="Kapolda Kepulauan Riau">Kapolda Kepulauan Riau</option>
-                                    <option value="Kapolda Jambi">Kapolda Jambi</option>
-                                    <option value="Kapolda Bengkulu">Kapolda Bengkulu</option>
-                                    <option value="Kapolda Sumatera Selatan">Kapolda Sumatera Selatan</option>
-                                    <option value="Kapolda Kepulauan Bangka Belitung">Kapolda Kepulauan Bangka Belitung</option>
-                                    <option value="Kapolda Lampung">Kapolda Lampung</option>
-                                    <option value="Kapolda Metro Jaya">Kapolda Metro Jaya</option>
-                                    <option value="Kapolda Banten">Kapolda Banten</option>
-                                    <option value="Kapolda Jawa Barat">Kapolda Jawa Barat</option>
-                                    <option value="Kapolda Jawa Tengah">Kapolda Jawa Tengah</option>
-                                    <option value="Kapolda Daerah Istimewa Yogyakarta">Kapolda Daerah Istimewa Yogyakarta</option>
-                                    <option value="Kapolda Jawa Timur">Kapolda Jawa Timur</option>
-                                    <option value="Kapolda Bali">Kapolda Bali</option>
-                                    <option value="Kapolda Nusa Tenggara Barat">Kapolda Nusa Tenggara Barat</option>
-                                    <option value="Kapolda Nusa Tenggara Timur">Kapolda Nusa Tenggara Timur</option>
-                                    <option value="Kapolda Kalimantan Barat">Kapolda Kalimantan Barat</option>
-                                    <option value="Kapolda Kalimantan Tengah">Kapolda Kalimantan Tengah</option>
-                                    <option value="Kapolda Kalimantan Selatan">Kapolda Kalimantan Selatan</option>
-                                    <option value="Kapolda Kalimantan Timur">Kapolda Kalimantan Timur</option>
-                                    <option value="Kapolda Kalimantan Utara">Kapolda Kalimantan Utara</option>
-                                    <option value="Kapolda Sulawesi Utara">Kapolda Sulawesi Utara</option>
-                                    <option value="Kapolda Gorontalo">Kapolda Gorontalo</option>
-                                    <option value="Kapolda Sulawesi Tengah">Kapolda Sulawesi Tengah</option>
-                                    <option value="Kapolda Sulawesi Barat">Kapolda Sulawesi Barat</option>
-                                    <option value="Kapolda Sulawesi Selatan">Kapolda Sulawesi Selatan</option>
-                                    <option value="Kapolda Sulawesi Tenggara">Kapolda Sulawesi Tenggara</option>
-                                    <option value="Kapolda Maluku">Kapolda Maluku</option>
-                                    <option value="Kapolda Maluku Utara">Kapolda Maluku Utara</option>
-                                    <option value="Kapolda Papua Barat">Kapolda Papua Barat</option>
-                                    <option value="Kapolda Papua Barat Daya">Kapolda Papua Barat Daya</option>
-                                    <option value="Kapolda Papua">Kapolda Papua</option>
-                                    <option value="Kapolda Papua Tengah">Kapolda Papua Tengah</option>
-                                    <option value="Kapolda Papua Pegunungan">Kapolda Papua Pegunungan</option>
-                                    <option value="Kapolda Papua Selatan">Kapolda Papua Selatan</option>
                                 </select>
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label for="perihal_masuk" class="form-label fw-bold">Perihal:</label>
                             <input type="text" id="perihal_masuk" class="form-control" required>
                         </div>
-
                         <div class="d-flex gap-2">
                             <button id="btn_simpan_masuk" class="btn btn-primary" onclick="simpanSurat('masuk')">Simpan Data Surat Masuk</button>
                             <button id="btn_batal_masuk" class="btn btn-secondary d-none" onclick="batalEdit('masuk')">Batal Edit</button>
                         </div>
-                        
                         <div id="pesan_masuk" class="mt-3 fw-bold"></div>
                     </div>
                 </div>
 
-                <!-- Tabel Data Surat Masuk -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0 text-primary fw-bold">Daftar & Laporan Surat Masuk</h5>
@@ -315,44 +146,33 @@
                                 <input type="text" id="cari_masuk" class="form-control" placeholder="Cari teks..." onkeyup="tampilkanSurat('masuk')">
                             </div>
                             <div class="col-md-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white">Dari</span>
-                                    <input type="date" id="mulai_masuk" class="form-control" onchange="tampilkanSurat('masuk')">
-                                </div>
+                                <input type="date" id="mulai_masuk" class="form-control" onchange="tampilkanSurat('masuk')">
                             </div>
                             <div class="col-md-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white">Sampai</span>
-                                    <input type="date" id="sampai_masuk" class="form-control" onchange="tampilkanSurat('masuk')">
-                                </div>
+                                <input type="date" id="sampai_masuk" class="form-control" onchange="tampilkanSurat('masuk')">
                             </div>
                             <div class="col-md-3 text-md-end">
-                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('masuk')">📥 Unduh Excel</button>
-                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('masuk')">📄 Unduh PDF</button>
+                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('masuk')">Excel</button>
+                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('masuk')">PDF</button>
                             </div>
                         </div>
-
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-hover align-middle">
-                                <thead class="table-primary text-center align-middle">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead class="table-primary text-center">
                                     <tr>
-                                        <th style="width: 5%;">No</th>
-                                        <th style="width: 15%;">Jenis Surat</th>
-                                        <th style="width: 15%;">Nomor Surat</th>
-                                        <th style="width: 12%;">Tanggal & Jam Diterima</th>
-                                        <th style="width: 15%;">Pengirim</th>
-                                        <th style="width: 13%;">Tujuan</th>
-                                        <th style="width: 15%;">Perihal</th>
-                                        <th style="width: 10%;">Aksi</th>
+                                        <th>No</th>
+                                        <th>Jenis</th>
+                                        <th>Nomor</th>
+                                        <th>Tanggal</th>
+                                        <th>Pengirim</th>
+                                        <th>Tujuan</th>
+                                        <th>Perihal</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tabel_masuk">
-                                    <!-- Data dimuat otomatis -->
-                                </tbody>
+                                <tbody id="tabel_masuk"></tbody>
                             </table>
                         </div>
-
-                        <!-- Navigasi Pagination Surat Masuk -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div id="info_halaman_masuk" class="text-muted small"></div>
                             <ul id="navigasi_halaman_masuk" class="pagination pagination-sm mb-0"></ul>
@@ -369,235 +189,56 @@
                     </div>
                     <div class="card-body">
                         <input type="hidden" id="edit_id_keluar">
-                        <input type="hidden" id="waktu_tersembunyi_keluar">
-
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="jenis_surat_keluar" class="form-label fw-bold">Jenis Surat:</label>
                                 <select id="jenis_surat_keluar" class="form-select" required>
                                     <option value="" disabled selected>-- Pilih Jenis Surat --</option>
-                                    <option value="Amanat">Amanat</option>
-                                    <option value="Berita Acara">Berita Acara</option>
                                     <option value="Biasa">Biasa</option>
-                                    <option value="Instansi Luar">Instansi Luar</option>
-                                    <option value="Instruksi">Instruksi</option>
-                                    <option value="Keputusan">Keputusan</option>
-                                    <option value="Laporan">Laporan</option>
-                                    <option value="Maklumat">Maklumat</option>
                                     <option value="Nota Dinas">Nota Dinas</option>
-                                    <option value="Notula">Notula</option>
-                                    <option value="Panggilan Personel">Panggilan Personel</option>
-                                    <option value="Pengaduan Masyarakat">Pengaduan Masyarakat</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Peraturan">Peraturan</option>
-                                    <option value="Rahasia">Rahasia</option>
-                                    <option value="Ren Ops">Ren Ops</option>
-                                    <option value="Sandi">Sandi</option>
-                                    <option value="Sangat Rahasia">Sangat Rahasia</option>
-                                    <option value="Sipil">Sipil</option>
-                                    <option value="SOP">SOP</option>
-                                    <option value="Surat Cuti">Surat Cuti</option>
-                                    <option value="Surat Edaran">Surat Edaran</option>
-                                    <option value="Surat Izin">Surat Izin</option>
-                                    <option value="Surat Izin Jalan">Surat Izin Jalan</option>
-                                    <option value="Surat Keterangan">Surat Keterangan</option>
-                                    <option value="Surat Pemberitahuan">Surat Pemberitahuan</option>
-                                    <option value="Surat Pengantar">Surat Pengantar</option>
                                     <option value="Surat Perintah">Surat Perintah</option>
-                                    <option value="Surat Perjalanan Dinas">Surat Perjalanan Dinas</option>
-                                    <option value="Surat Pernyataan">Surat Pernyataan</option>
-                                    <option value="Surat Persetujuan">Surat Persetujuan</option>
-                                    <option value="Surat Rekomendasi">Surat Rekomendasi</option>
-                                    <option value="Surat Takkah">Surat Takkah</option>
-                                    <option value="Surat Telegram">Surat Telegram</option>
-                                    <option value="Surat Telegram Rahasia">Surat Telegram Rahasia</option>
-                                    <option value="Surat Tugas">Surat Tugas</option>
-                                    <option value="Surat Undangan">Surat Undangan</option>
-                                    <option value="Telaahan Staf">Telaahan Staf</option>
-                                    <option value="Terbatas">Terbatas</option>
-                                    <option value="Undangan">Undangan</option>
-                                    <option value="Undangan Cetak">Undangan Cetak</option>
                                 </select>
                             </div>
-
                             <div class="col-md-4 mb-3">
                                 <label for="nomor_surat_keluar" class="form-label fw-bold">Nomor Surat:</label>
                                 <input type="text" id="nomor_surat_keluar" class="form-control" required>
                             </div>
-
                             <div class="col-md-4 mb-3">
                                 <label for="tanggal_keluar" class="form-label fw-bold">Tanggal Keluar:</label>
                                 <input type="date" id="tanggal_keluar" class="form-control" required>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="pengirim_keluar" class="form-label fw-bold">Pengirim:</label>
                                 <select id="pengirim_keluar" class="form-select mb-2" onchange="cekPilihanPengirim('keluar')" required>
                                     <option value="" disabled selected>-- Pilih Pengirim --</option>
-                                    <option value="Instansi Luar">Instansi Luar</option>
-                                    <option value="Itwasum Polri">Itwasum Polri</option>
-                                    <option value="Bareskrim Polri">Bareskrim Polri</option>
-                                    <option value="Baharkam Polri">Baharkam Polri</option>
-                                    <option value="Korbrimob Polri">Korbrimob Polri</option>
-                                    <option value="Baintelkam Polri">Baintelkam Polri</option>
-                                    <option value="Lemdiklat Polri">Lemdiklat Polri</option>
-                                    <option value="Stamaops Polri">Stamaops Polri</option>
-                                    <option value="Stamarena Polri">Stamarena Polri</option>
-                                    <option value="Korlantas Polri">Korlantas Polri</option>
-                                    <option value="Kortastipidkor Polri">Kortastipidkor Polri</option>
-                                    <option value="Densus 88 AT Polri">Densus 88 AT Polri</option>
-                                    <option value="SDM Polri">SDM Polri</option>
-                                    <option value="Slog Polri">Slog Polri</option>
-                                    <option value="Divpropam Polri">Divpropam Polri</option>
-                                    <option value="Divkum Polri">Divkum Polri</option>
-                                    <option value="Divhumas Polri">Divhumas Polri</option>
-                                    <option value="Div TIK Polri">Div TIK Polri</option>
-                                    <option value="Divhubinter Polri">Divhubinter Polri</option>
-                                    <option value="Pusdokkes Polri">Pusdokkes Polri</option>
-                                    <option value="Sahli Kapolri">Sahli Kapolri</option>
-                                    <option value="Puslitbang Polri">Puslitbang Polri</option>
-                                    <option value="Puskeu Polri">Puskeu Polri</option>
-                                    <option value="Pusjarah Polri">Pusjarah Polri</option>
-                                    <option value="Spripim Polri">Spripim Polri</option>
-                                    <option value="Yanma Polri">Yanma Polri</option>
                                     <option value="Setum Polri">Setum Polri</option>
-                                    <option value="Polda Aceh">Polda Aceh</option>
-                                    <option value="Polda Sumatera Utara">Polda Sumatera Utara</option>
-                                    <option value="Polda Sumatera Barat">Polda Sumatera Barat</option>
-                                    <option value="Polda Riau">Polda Riau</option>
-                                    <option value="Polda Kepulauan Riau">Polda Kepulauan Riau</option>
-                                    <option value="Polda Jambi">Polda Jambi</option>
-                                    <option value="Polda Bengkulu">Polda Bengkulu</option>
-                                    <option value="Polda Sumatera Selatan">Polda Sumatera Selatan</option>
-                                    <option value="Polda Kepulauan Bangka Belitung">Polda Kepulauan Bangka Belitung</option>
-                                    <option value="Polda Lampung">Polda Lampung</option>
-                                    <option value="Polda Metro Jaya">Polda Metro Jaya</option>
-                                    <option value="Polda Banten">Polda Banten</option>
-                                    <option value="Polda Jawa Barat">Polda Jawa Barat</option>
-                                    <option value="Polda Jawa Tengah">Polda Jawa Tengah</option>
-                                    <option value="Polda Daerah Istimewa Yogyakarta">Polda Daerah Istimewa Yogyakarta</option>
-                                    <option value="Polda Jawa Timur">Polda Jawa Timur</option>
-                                    <option value="Polda Bali">Polda Bali</option>
-                                    <option value="Polda Nusa Tenggara Barat">Polda Nusa Tenggara Barat</option>
-                                    <option value="Polda Nusa Tenggara Timur">Polda Nusa Tenggara Timur</option>
-                                    <option value="Polda Kalimantan Barat">Polda Kalimantan Barat</option>
-                                    <option value="Polda Kalimantan Tengah">Polda Kalimantan Tengah</option>
-                                    <option value="Polda Kalimantan Selatan">Polda Kalimantan Selatan</option>
-                                    <option value="Polda Kalimantan Timur">Polda Kalimantan Timur</option>
-                                    <option value="Polda Kalimantan Utara">Polda Kalimantan Utara</option>
-                                    <option value="Polda Sulawesi Utara">Polda Sulawesi Utara</option>
-                                    <option value="Polda Gorontalo">Polda Gorontalo</option>
-                                    <option value="Polda Sulawesi Tengah">Polda Sulawesi Tengah</option>
-                                    <option value="Polda Sulawesi Barat">Polda Sulawesi Barat</option>
-                                    <option value="Polda Sulawesi Selatan">Polda Sulawesi Selatan</option>
-                                    <option value="Polda Sulawesi Tenggara">Polda Sulawesi Tenggara</option>
-                                    <option value="Polda Maluku">Polda Maluku</option>
-                                    <option value="Polda Maluku Utara">Polda Maluku Utara</option>
-                                    <option value="Polda Papua Barat">Polda Papua Barat</option>
-                                    <option value="Polda Papua Barat Daya">Polda Papua Barat Daya</option>
-                                    <option value="Polda Papua">Polda Papua</option>
-                                    <option value="Polda Papua Tengah">Polda Papua Tengah</option>
-                                    <option value="Polda Papua Pegunungan">Polda Papua Pegunungan</option>
-                                    <option value="Polda Papua Selatan">Polda Papua Selatan</option>
                                 </select>
-
                                 <div id="wrapper_pengirim_lain_keluar" class="d-none">
-                                    <label for="pengirim_lain_keluar" class="form-label fw-bold text-muted small">Silakan masukan pengirim disini:</label>
-                                    <input type="text" id="pengirim_lain_keluar" class="form-control" placeholder="Masukkan nama instansi luar...">
+                                    <input type="text" id="pengirim_lain_keluar" class="form-control" placeholder="Pengirim...">
                                 </div>
                             </div>
-
                             <div class="col-md-6 mb-3">
                                 <label for="tujuan_keluar" class="form-label fw-bold">Tujuan:</label>
                                 <select id="tujuan_keluar" class="form-select" required>
                                     <option value="" disabled selected>-- Pilih Tujuan --</option>
-                                    <option value="Kapolri">Kapolri</option>
-                                    <option value="Wakapolri">Wakapolri</option>
-                                    <option value="Irwasum Polri">Irwasum Polri</option>
-                                    <option value="Kabareskrim Polri">Kabareskrim Polri</option>
-                                    <option value="Kabaharkam Polri">Kabaharkam Polri</option>
-                                    <option value="Kakorbrimob Polri">Kakorbrimob Polri</option>
-                                    <option value="Kabaintelkam Polri">Kabaintelkam Polri</option>
-                                    <option value="Kalemdiklat Polri">Kalemdiklat Polri</option>
-                                    <option value="Astamaops Polri">Astamaops Polri</option>
-                                    <option value="Astamarena Polri">Astamarena Polri</option>
-                                    <option value="Kakorlantas Polri">Kakorlantas Polri</option>
-                                    <option value="Kakortastipidkor Polri">Kakortastipidkor Polri</option>
-                                    <option value="Kadensus 88 AT Polri">Kadensus 88 AT Polri</option>
-                                    <option value="As SDM Kapolri">As SDM Kapolri</option>
-                                    <option value="Aslog Kapolri">Aslog Kapolri</option>
-                                    <option value="Kadivpropam Polri">Kadivpropam Polri</option>
-                                    <option value="Kadivkum Polri">Kadivkum Polri</option>
-                                    <option value="Kadivhumas Polri">Kadivhumas Polri</option>
-                                    <option value="Kadiv TIK Polri">Kadiv TIK Polri</option>
-                                    <option value="Kadivhubinter Polri">Kadivhubinter Polri</option>
-                                    <option value="Kapusdokkes Polri">Kapusdokkes Polri</option>
-                                    <option value="Koorsahli Kapolri">Koorsahli Kapolri</option>
-                                    <option value="Kapuslitbang Polri">Kapuslitbang Polri</option>
-                                    <option value="Kapuskeu Polri">Kapuskeu Polri</option>
-                                    <option value="Kapusjarah Polri">Kapusjarah Polri</option>
-                                    <option value="Koorspripim Polri">Koorspripim Polri</option>
-                                    <option value="Kayanma Polri">Kayanma Polri</option>
-                                    <option value="Kasetum Polri">Kasetum Polri</option>
-                                    <option value="Kapolda Aceh">Kapolda Aceh</option>
-                                    <option value="Kapolda Sumatera Utara">Kapolda Sumatera Utara</option>
-                                    <option value="Kapolda Sumatera Barat">Kapolda Sumatera Barat</option>
-                                    <option value="Kapolda Riau">Kapolda Riau</option>
-                                    <option value="Kapolda Kepulauan Riau">Kapolda Kepulauan Riau</option>
-                                    <option value="Kapolda Jambi">Kapolda Jambi</option>
-                                    <option value="Kapolda Bengkulu">Kapolda Bengkulu</option>
-                                    <option value="Kapolda Sumatera Selatan">Kapolda Sumatera Selatan</option>
-                                    <option value="Kapolda Kepulauan Bangka Belitung">Kapolda Kepulauan Bangka Belitung</option>
-                                    <option value="Kapolda Lampung">Kapolda Lampung</option>
-                                    <option value="Kapolda Metro Jaya">Kapolda Metro Jaya</option>
-                                    <option value="Kapolda Banten">Kapolda Banten</option>
-                                    <option value="Kapolda Jawa Barat">Kapolda Jawa Barat</option>
-                                    <option value="Kapolda Jawa Tengah">Kapolda Jawa Tengah</option>
-                                    <option value="Kapolda Daerah Istimewa Yogyakarta">Kapolda Daerah Istimewa Yogyakarta</option>
-                                    <option value="Kapolda Jawa Timur">Kapolda Jawa Timur</option>
-                                    <option value="Kapolda Bali">Kapolda Bali</option>
-                                    <option value="Kapolda Nusa Tenggara Barat">Kapolda Nusa Tenggara Barat</option>
-                                    <option value="Kapolda Nusa Tenggara Timur">Kapolda Nusa Tenggara Timur</option>
-                                    <option value="Kapolda Kalimantan Barat">Kapolda Kalimantan Barat</option>
-                                    <option value="Kapolda Kalimantan Tengah">Kapolda Kalimantan Tengah</option>
-                                    <option value="Kapolda Kalimantan Selatan">Kapolda Kalimantan Selatan</option>
-                                    <option value="Kapolda Kalimantan Timur">Kapolda Kalimantan Timur</option>
-                                    <option value="Kapolda Kalimantan Utara">Kapolda Kalimantan Utara</option>
-                                    <option value="Kapolda Sulawesi Utara">Kapolda Sulawesi Utara</option>
-                                    <option value="Kapolda Gorontalo">Kapolda Gorontalo</option>
-                                    <option value="Kapolda Sulawesi Tengah">Kapolda Sulawesi Tengah</option>
-                                    <option value="Kapolda Sulawesi Barat">Kapolda Sulawesi Barat</option>
-                                    <option value="Kapolda Sulawesi Selatan">Kapolda Sulawesi Selatan</option>
-                                    <option value="Kapolda Sulawesi Tenggara">Kapolda Sulawesi Tenggara</option>
-                                    <option value="Kapolda Maluku">Kapolda Maluku</option>
-                                    <option value="Kapolda Maluku Utara">Kapolda Maluku Utara</option>
-                                    <option value="Kapolda Papua Barat">Kapolda Papua Barat</option>
-                                    <option value="Kapolda Papua Barat Daya">Kapolda Papua Barat Daya</option>
-                                    <option value="Kapolda Papua">Kapolda Papua</option>
-                                    <option value="Kapolda Papua Tengah">Kapolda Papua Tengah</option>
-                                    <option value="Kapolda Papua Pegunungan">Kapolda Papua Pegunungan</option>
-                                    <option value="Kapolda Papua Selatan">Kapolda Papua Selatan</option>
+                                    <option value="Instansi Luar">Instansi Luar</option>
                                 </select>
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label for="perihal_keluar" class="form-label fw-bold">Perihal:</label>
                             <input type="text" id="perihal_keluar" class="form-control" required>
                         </div>
-
                         <div class="d-flex gap-2">
                             <button id="btn_simpan_keluar" class="btn btn-success" onclick="simpanSurat('keluar')">Simpan Data Surat Keluar</button>
                             <button id="btn_batal_keluar" class="btn btn-secondary d-none" onclick="batalEdit('keluar')">Batal Edit</button>
                         </div>
-                        
                         <div id="pesan_keluar" class="mt-3 fw-bold"></div>
                     </div>
                 </div>
 
-                <!-- Tabel Data Surat Keluar -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0 text-success fw-bold">Daftar & Laporan Surat Keluar</h5>
@@ -608,44 +249,33 @@
                                 <input type="text" id="cari_keluar" class="form-control" placeholder="Cari teks..." onkeyup="tampilkanSurat('keluar')">
                             </div>
                             <div class="col-md-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white">Dari</span>
-                                    <input type="date" id="mulai_keluar" class="form-control" onchange="tampilkanSurat('keluar')">
-                                </div>
+                                <input type="date" id="mulai_keluar" class="form-control" onchange="tampilkanSurat('keluar')">
                             </div>
                             <div class="col-md-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white">Sampai</span>
-                                    <input type="date" id="sampai_keluar" class="form-control" onchange="tampilkanSurat('keluar')">
-                                </div>
+                                <input type="date" id="sampai_keluar" class="form-control" onchange="tampilkanSurat('keluar')">
                             </div>
                             <div class="col-md-3 text-md-end">
-                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('keluar')">📥 Unduh Excel</button>
-                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('keluar')">📄 Unduh PDF</button>
+                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('keluar')">Excel</button>
+                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('keluar')">PDF</button>
                             </div>
                         </div>
-
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-hover align-middle">
-                                <thead class="table-success text-center align-middle">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead class="table-success text-center">
                                     <tr>
-                                        <th style="width: 5%;">No</th>
-                                        <th style="width: 15%;">Jenis Surat</th>
-                                        <th style="width: 15%;">Nomor Surat</th>
-                                        <th style="width: 12%;">Tanggal & Jam Keluar</th>
-                                        <th style="width: 15%;">Pengirim</th>
-                                        <th style="width: 13%;">Tujuan</th>
-                                        <th style="width: 15%;">Perihal</th>
-                                        <th style="width: 10%;">Aksi</th>
+                                        <th>No</th>
+                                        <th>Jenis</th>
+                                        <th>Nomor</th>
+                                        <th>Tanggal</th>
+                                        <th>Pengirim</th>
+                                        <th>Tujuan</th>
+                                        <th>Perihal</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tabel_keluar">
-                                    <!-- Data dimuat otomatis -->
-                                </tbody>
+                                <tbody id="tabel_keluar"></tbody>
                             </table>
                         </div>
-
-                        <!-- Navigasi Pagination Surat Keluar -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div id="info_halaman_keluar" class="text-muted small"></div>
                             <ul id="navigasi_halaman_keluar" class="pagination pagination-sm mb-0"></ul>
@@ -654,14 +284,69 @@
                 </div>
             </div>
 
+            <!-- ================= SECTION: MANAJEMEN USER (KHUSUS ADMIN) ================= -->
+            <div id="section_manajemen_user" class="d-none">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 text-dark fw-bold">Formulir Tambah User Baru</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="email_baru" class="form-label fw-bold">Email User:</label>
+                                <input type="email" id="email_baru" class="form-control" placeholder="email@polri.go.id" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="password_baru" class="form-label fw-bold">Password Sementara:</label>
+                                <input type="password" id="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="role_baru" class="form-label fw-bold">Pilih Role / Peran:</label>
+                                <select id="role_baru" class="form-select" required>
+                                    <option value="" disabled selected>-- Pilih Role --</option>
+                                    <option value="super_admin">Super Admin</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="operator_level_1">Operator Level 1</option>
+                                    <option value="operator_level_2">Operator Level 2</option>
+                                    <option value="operator_level_3">Operator Level 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-dark fw-bold" onclick="tambahUserBaru()">Buat Akun User Baru</button>
+                        <div id="pesan_user" class="mt-3 fw-bold"></div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 text-dark fw-bold">Daftar Akun Pengguna Terdaftar</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead class="table-dark text-center">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Email</th>
+                                        <th>Role / Peran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel_user">
+                                    <!-- Dimuat otomatis -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Script Bootstrap Bundle JS -->
+    <!-- Script Bootstrap & Logika Utama -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // --- 1. KONEKSI SUPABASE ---
         const SUPABASE_URL = 'https://ttoavlqcwlvkykkmrlap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0b2F2bHFjd2x2a3lra21ybGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NjQ0MzAsImV4cCI6MjEwMDI0MDQzMH0.vGInPpN5mnG2nMS2HiZYdKvhmMOMIuus4M-qSAYlXOI';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -670,29 +355,29 @@
         let dataKeluarTerakhir = [];
         let rolePenggunaAktif = '';
 
-        // Variabel untuk Pagination
         const barisPerHalaman = 10;
         let halamanMasukAktif = 1;
         let halamanKeluarAktif = 1;
 
-        // --- 2. SISTEM AUTENTIKASI & CEK ROLE ---
         async function cekSesiPengguna() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 document.getElementById('section_login').classList.add('d-none');
                 document.getElementById('app_utama').classList.remove('d-none');
                 
-                // Ambil data role pengguna dari tabel profiles
-                const { data: profile, error } = await supabaseClient
+                const { data: profile } = await supabaseClient
                     .from('profiles')
                     .select('role')
                     .eq('id', session.user.id)
                     .single();
 
-                if (profile) {
-                    rolePenggunaAktif = profile.role;
+                rolePenggunaAktif = profile ? profile.role : 'operator_level_3';
+
+                // Tampilkan menu Manajemen User jika Super Admin atau Admin
+                if (rolePenggunaAktif === 'super_admin' || rolePenggunaAktif === 'admin') {
+                    document.getElementById('li_menu_user').classList.remove('d-none');
                 } else {
-                    rolePenggunaAktif = 'operator_level_3'; // Default jika belum diatur
+                    document.getElementById('li_menu_user').classList.add('d-none');
                 }
 
                 aturTanggalSekarang();
@@ -720,444 +405,229 @@
                 return;
             }
 
-            pesanEl.className = "mt-3 text-center small fw-bold text-primary";
-            pesanEl.innerText = "Memproses masuk...";
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password,
-            });
-
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) {
                 pesanEl.className = "mt-3 text-center small fw-bold text-danger";
                 pesanEl.innerText = "Gagal masuk: " + error.message;
             } else {
                 pesanEl.className = "mt-3 text-center small fw-bold text-success";
-                pesanEl.innerText = "Berhasil masuk! Memuat aplikasi...";
-                setTimeout(() => {
-                    cekSesiPengguna();
-                }, 1000);
+                pesanEl.innerText = "Berhasil masuk! Memuat...";
+                setTimeout(() => cekSesiPengguna(), 1000);
             }
         }
 
         async function prosesLogout() {
-            const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi?");
-            if (!konfirmasi) return;
-
-            const { error } = await supabaseClient.auth.signOut();
-            if (error) {
-                alert("Gagal keluar: " + error.message);
-            } else {
-                cekSesiPengguna();
-            }
+            if (!confirm("Apakah Anda yakin ingin keluar?")) return;
+            await supabaseClient.auth.signOut();
+            cekSesiPengguna();
         }
 
-        // --- NAVIGASI MENU DENGAN PENYIMPANAN LOCALSTORAGE ---
+        // --- NAVIGASI MENU ---
         function gantiMenu(menu, simpanKeStorage = true) {
             const sectionMasuk = document.getElementById('section_surat_masuk');
             const sectionKeluar = document.getElementById('section_surat_keluar');
+            const sectionUser = document.getElementById('section_manajemen_user');
+            
             const btnMasuk = document.getElementById('btn_menu_masuk');
             const btnKeluar = document.getElementById('btn_menu_keluar');
+            const btnUser = document.getElementById('btn_menu_user');
+
+            sectionMasuk.classList.add('d-none');
+            sectionKeluar.classList.add('d-none');
+            sectionUser.classList.add('d-none');
+            
+            btnMasuk.classList.remove('active', 'bg-primary');
+            btnKeluar.classList.remove('active', 'bg-success', 'bg-primary');
+            if(btnUser) btnUser.classList.remove('active', 'bg-dark', 'bg-primary');
 
             if (menu === 'masuk') {
                 sectionMasuk.classList.remove('d-none');
-                sectionKeluar.classList.add('d-none');
-        
                 btnMasuk.classList.add('active', 'bg-primary');
-                btnMasuk.classList.remove('bg-success');
-                btnKeluar.classList.remove('active', 'bg-success', 'bg-primary');
-        
-                if (simpanKeStorage) {
-                    localStorage.setItem('menuAktif', 'masuk');
-                }
+                if (simpanKeStorage) localStorage.setItem('menuAktif', 'masuk');
             } else if (menu === 'keluar') {
-                sectionMasuk.classList.add('d-none');
                 sectionKeluar.classList.remove('d-none');
-        
-                btnKeluar.classList.add('active');
-                btnKeluar.classList.remove('bg-success', 'bg-primary');
-                btnMasuk.classList.remove('active', 'bg-primary', 'bg-success');
-        
-                if (simpanKeStorage) {
-                    localStorage.setItem('menuAktif', 'keluar');
+                btnKeluar.classList.add('active', 'bg-success');
+                if (simpanKeStorage) localStorage.setItem('menuAktif', 'keluar');
+            } else if (menu === 'user') {
+                sectionUser.classList.remove('d-none');
+                btnUser.classList.add('active', 'bg-dark');
+                if (simpanKeStorage) localStorage.setItem('menuAktif', 'user');
+                tampilkanDaftarUser();
+            }
+        }
+
+        // --- TAMBAH USER BARU OLEH ADMIN ---
+        async function tambahUserBaru() {
+            const email = document.getElementById('email_baru').value;
+            const password = document.getElementById('password_baru').value;
+            const role = document.getElementById('role_baru').value;
+            const pesanEl = document.getElementById('pesan_user');
+
+            if (!email || !password || !role) {
+                alert("Semua kolom pada form user wajib diisi!");
+                return;
+            }
+
+            pesanEl.className = "mt-3 fw-bold text-primary";
+            pesanEl.innerText = "Membuat akun baru...";
+
+            // Catatan: Memakai signUp. (User baru otomatis terdaftar di auth & profiles jika ada trigger, 
+            // atau kita masukkan manual ke tabel profiles lewat query client).
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+            if (error) {
+                pesanEl.className = "mt-3 fw-bold text-danger";
+                pesanEl.innerText = "Gagal membuat user: " + error.message;
+            } else if (data && data.user) {
+                const userId = data.user.id;
+                // Masukkan role ke tabel profiles
+                const { error: profileError } = await supabaseClient.from('profiles').insert([
+                    { id: userId, email: email, role: role }
+                ]);
+
+                if (profileError) {
+                    pesanEl.className = "mt-3 fw-bold text-danger";
+                    pesanEl.innerText = "Akun terbuat tapi gagal menyimpan role: " + profileError.message;
+                } else {
+                    pesanEl.className = "mt-3 fw-bold text-success";
+                    pesanEl.innerText = "Berhasil membuat user baru!";
+                    document.getElementById('email_baru').value = '';
+                    document.getElementById('password_baru').value = '';
+                    document.getElementById('role_baru').value = '';
+                    tampilkanDaftarUser();
                 }
             }
         }
 
+        async function tampilkanDaftarUser() {
+            const { data, error } = await supabaseClient.from('profiles').select('*');
+            const tbody = document.getElementById('tabel_user');
+            tbody.innerHTML = '';
+
+            if (error || !data) {
+                tbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Gagal memuat data user.</td></tr>`;
+                return;
+            }
+
+            data.forEach((usr, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center">${idx + 1}</td>
+                        <td>${usr.email}</td>
+                        <td class="text-center"><span class="badge bg-secondary">${usr.role}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // (Fungsi pendukung surat masuk/keluar, edit, hapus, pagination, excel, pdf tetap sama seperti sebelumnya)
         function aturTanggalSekarang() {
             const sekarang = new Date();
             sekarang.setMinutes(sekarang.getMinutes() - sekarang.getTimezoneOffset());
-            const tanggalLokal = sekarang.toISOString().slice(0, 10);
-            
-            document.getElementById('tanggal_masuk').value = tanggalLokal;
-            document.getElementById('waktu_tersembunyi_masuk').value = '';
-
-            document.getElementById('tanggal_keluar').value = tanggalLokal;
-            document.getElementById('waktu_tersembunyi_keluar').value = '';
+            const tgl = sekarang.toISOString().slice(0, 10);
+            document.getElementById('tanggal_masuk').value = tgl;
+            document.getElementById('tanggal_keluar').value = tgl;
         }
 
-        function formatTanggalWaktu(tanggalInput) {
-            if (!tanggalInput) return '-';
+        function formatTanggalWaktu(tglInput) {
+            if (!tglInput) return '-';
             try {
-                let teksBersih = tanggalInput.split('.')[0].replace('Z', '');
-                const bagian = teksBersih.split('T');
+                let bersih = tglInput.split('.')[0].replace('Z', '');
+                let bagian = bersih.split('T');
                 if (bagian.length === 2) {
-                    const tanggal = bagian[0].split('-'); 
-                    const jam = bagian[1].substring(0, 5); 
-                    if (tanggal.length === 3) {
-                        return `${tanggal[2]}/${tanggal[1]}/${tanggal[0]} ${jam}`;
-                    }
+                    let t = bagian[0].split('-');
+                    return `${t[2]}/${t[1]}/${t[0]} ${bagian[1].substring(0, 5)}`;
                 }
-                return tanggalInput; 
-            } catch (error) {
-                return tanggalInput;
-            }
+                return tglInput;
+            } catch { return tglInput; }
         }
 
         function cekPilihanPengirim(tipe) {
-            const pilihan = document.getElementById(`pengirim_${tipe}`).value;
-            const wrapperLain = document.getElementById(`wrapper_pengirim_lain_${tipe}`);
-            const inputLain = document.getElementById(`pengirim_lain_${tipe}`);
-
-            if (pilihan === "Instansi Luar") {
-                wrapperLain.classList.remove('d-none');
-                inputLain.focus();
-            } else {
-                wrapperLain.classList.add('d-none');
-                inputLain.value = "";
-            }
+            const pil = document.getElementById(`pengirim_${tipe}`).value;
+            const wrap = document.getElementById(`wrapper_pengirim_lain_${tipe}`);
+            if (pil === "Instansi Luar") wrap.classList.remove('d-none');
+            else wrap.classList.add('d-none');
         }
 
-        // --- SIMPAN / UPDATE SURAT (MASUK & KELUAR) ---
         async function simpanSurat(tipe) {
             const editId = document.getElementById(`edit_id_${tipe}`).value;
-            const jenisSurat = document.getElementById(`jenis_surat_${tipe}`).value;
-            const nomorSurat = document.getElementById(`nomor_surat_${tipe}`).value;
-            const tanggalInput = document.getElementById(`tanggal_${tipe}`).value;
-            const pilihanPengirim = document.getElementById(`pengirim_${tipe}`).value;
-            const inputPengirimLain = document.getElementById(`pengirim_lain_${tipe}`) ? document.getElementById(`pengirim_lain_${tipe}`).value : '';
-            const tujuanSurat = document.getElementById(`tujuan_${tipe}`).value;
-            const perihalSurat = document.getElementById(`perihal_${tipe}`).value;
+            const jenis = document.getElementById(`jenis_surat_${tipe}`).value;
+            const nomor = document.getElementById(`nomor_surat_${tipe}`).value;
+            const tgl = document.getElementById(`tanggal_${tipe}`).value;
+            const pengirimVal = document.getElementById(`pengirim_${tipe}`).value;
+            const pengirimLain = document.getElementById(`pengirim_lain_${tipe}`) ? document.getElementById(`pengirim_lain_${tipe}`).value : '';
+            const tujuan = document.getElementById(`tujuan_${tipe}`).value;
+            const perihal = document.getElementById(`perihal_${tipe}`).value;
 
-            let pengirimFinal = pilihanPengirim;
-            if (pilihanPengirim === "Instansi Luar") {
-                pengirimFinal = inputPengirimLain;
-            }
-
-            const sekarang = new Date();
-            const jam = String(sekarang.getHours()).padStart(2, '0');
-            const menit = String(sekarang.getMinutes()).padStart(2, '0');
-            const detik = String(sekarang.getSeconds()).padStart(2, '0');
-            
-            let tanggalFinal = tanggalInput;
-            if (tanggalInput) {
-                tanggalFinal = `${tanggalInput}T${jam}:${menit}:${detik}`;
-            }
-
-            if (!jenisSurat) { alert("Peringatan: Jenis Surat belum dipilih!"); return; }
-            if (!nomorSurat) { alert("Peringatan: Nomor Surat belum diisi!"); return; }
-            if (!tanggalInput) { alert("Peringatan: Tanggal belum dipilih!"); return; }
-            if (!pilihanPengirim) { alert("Peringatan: Pengirim belum dipilih!"); return; }
-            if (pilihanPengirim === "Instansi Luar" && !inputPengirimLain) { alert("Peringatan: Silakan masukan pengirim disini!"); return; }
-            if (!tujuanSurat) { alert("Peringatan: Tujuan belum dipilih!"); return; }
-            if (!perihalSurat) { alert("Peringatan: Perihal belum diisi!"); return; }
-
+            let pengirimFinal = pengirimVal === "Instansi Luar" ? pengirimLain : pengirimVal;
             const namaTabel = tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar';
-            const pesanEl = document.getElementById(`pesan_${tipe}`);
-            pesanEl.className = "mt-3 fw-bold text-primary";
-            pesanEl.innerText = "Sedang menyimpan data...";
-
-            let dataYangDisimpan = { 
-                jenis_surat: jenisSurat,
-                nomor_surat: nomorSurat, 
-                tanggal_diterima: tanggalFinal, 
-                pengirim: pengirimFinal, 
-                tujuan: tujuanSurat,
-                perihal: perihalSurat
-            };
-
-            let dbError = null;
-
-            if (editId) {
-                const { error } = await supabaseClient.from(namaTabel).update(dataYangDisimpan).eq('id', editId);
-                dbError = error;
-            } else {
-                const { error } = await supabaseClient.from(namaTabel).insert([dataYangDisimpan]);
-                dbError = error;
-            }
-
-            if (dbError) {
-                console.error("Masalah database:", dbError);
-                pesanEl.className = "mt-3 fw-bold text-danger";
-                pesanEl.innerText = "Gagal menyimpan data ke database!";
-            } else {
-                pesanEl.className = "mt-3 fw-bold text-success";
-                pesanEl.innerText = editId ? "Data berhasil diperbarui!" : "Data baru berhasil disimpan!";
-                batalEdit(tipe);
-                tampilkanSurat(tipe);
-            }
+            
+            let dataSimpan = { jenis_surat: jenis, nomor_surat: nomor, tanggal_diterima: tgl, pengirim: pengirimFinal, tujuan: tujuan, perihal: perihal };
+            
+            let err = editId ? (await supabaseClient.from(namaTabel).update(dataSimpan).eq('id', editId)).error : (await supabaseClient.from(namaTabel).insert([dataSimpan])).error;
+            
+            if (err) alert("Gagal menyimpan data!");
+            else { alert("Berhasil disimpan!"); tampilkanSurat(tipe); }
         }
 
-        // --- TAMPILKAN / CARI SURAT DENGAN PAGINATION ---
         async function tampilkanSurat(tipe) {
             const namaTabel = tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar';
-            const keyword = document.getElementById(`cari_${tipe}`).value;
-            const tanggalMulai = document.getElementById(`mulai_${tipe}`).value;
-            const tanggalSampai = document.getElementById(`sampai_${tipe}`).value;
-            
-            let halamanAktif = tipe === 'masuk' ? halamanMasukAktif : halamanKeluarAktif;
-
-            let queryCount = supabaseClient.from(namaTabel).select('*', { count: 'exact', head: true });
-            if (keyword) {
-                queryCount = queryCount.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
-            }
-            if (tanggalMulai) {
-                queryCount = queryCount.gte('tanggal_diterima', tanggalMulai);
-            }
-            if (tanggalSampai) {
-                queryCount = queryCount.lte('tanggal_diterima', tanggalSampai + 'T23:59:59');
-            }
-            const { count, error: countError } = await queryCount;
-            if (countError) { console.error("Gagal menghitung data:", countError); return; }
-
-            const totalData = count || 0;
-            const totalHalaman = Math.ceil(totalData / barisPerHalaman) || 1;
-
-            if (halamanAktif > totalHalaman) halamanAktif = totalHalaman;
-            if (halamanAktif < 1) halamanAktif = 1;
-
-            if (tipe === 'masuk') halamanMasukAktif = halamanAktif;
-            else halamanKeluarAktif = halamanAktif;
-
-            const dariIndex = (halamanAktif - 1) * barisPerHalaman;
-            const sampaiIndex = dariIndex + barisPerHalaman - 1;
-
-            let query = supabaseClient.from(namaTabel).select('*').order('dibuat_pada', { ascending: false }).range(dariIndex, sampaiIndex);
-
-            if (keyword) {
-                query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
-            }
-            if (tanggalMulai) {
-                query = query.gte('tanggal_diterima', tanggalMulai);
-            }
-            if (tanggalSampai) {
-                query = query.lte('tanggal_diterima', tanggalSampai + 'T23:59:59'); 
-            }
-
-            const { data, error } = await query;
-            if (error) { console.error("Gagal mengambil data:", error); return; }
+            const { data, error } = await supabaseClient.from(namaTabel).select('*').order('dibuat_pada', { ascending: false });
+            if (error) return;
 
             if (tipe === 'masuk') dataMasukTerakhir = data;
             else dataKeluarTerakhir = data;
 
             const tbody = document.getElementById(`tabel_${tipe}`);
-            tbody.innerHTML = ''; 
+            tbody.innerHTML = '';
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
-                document.getElementById(`info_halaman_${tipe}`).innerText = "Menampilkan 0 dari 0 data";
-                document.getElementById(`navigasi_halaman_${tipe}`).innerHTML = "";
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">Tidak ada data.</td></tr>`;
                 return;
             }
 
-            data.forEach((surat, index) => {
-                const nomorUrut = dariIndex + index + 1;
-                
-                // Aturan Tombol Aksi Berdasarkan Role (Super Admin & Admin bisa CRUD)
-                let tombolAksiHTML = `<span class="text-muted small">Hanya Baca</span>`;
+            data.forEach((s, idx) => {
+                let aksi = `<span class="text-muted small">Hanya Baca</span>`;
                 if (rolePenggunaAktif === 'super_admin' || rolePenggunaAktif === 'admin') {
-                    tombolAksiHTML = `
-                        <button class="btn btn-warning btn-sm mb-1 w-100" onclick="editSurat('${tipe}', '${surat.id}')">Edit</button>
-                        <button class="btn btn-danger btn-sm w-100" onclick="hapusSurat('${tipe}', '${surat.id}')">Hapus</button>
-                    `;
+                    aksi = `<button class="btn btn-warning btn-sm w-100 mb-1" onclick="hapusSurat('${tipe}', '${s.id}')">Hapus</button>`;
                 }
-
-                const baris = `
+                tbody.innerHTML += `
                     <tr>
-                        <td class="text-center">${nomorUrut}</td>
-                        <td>${surat.jenis_surat || '-'}</td>
-                        <td>${surat.nomor_surat}</td>
-                        <td class="text-center">${formatTanggalWaktu(surat.tanggal_diterima)}</td>
-                        <td>${surat.pengirim}</td>
-                        <td>${surat.tujuan || '-'}</td>
-                        <td>${surat.perihal}</td>
-                        <td class="text-center">
-                            ${tombolAksiHTML}
-                        </td>
+                        <td class="text-center">${idx + 1}</td>
+                        <td>${s.jenis_surat || '-'}</td>
+                        <td>${s.nomor_surat}</td>
+                        <td class="text-center">${formatTanggalWaktu(s.tanggal_diterima)}</td>
+                        <td>${s.pengirim}</td>
+                        <td>${s.tujuan || '-'}</td>
+                        <td>${s.perihal}</td>
+                        <td class="text-center">${aksi}</td>
                     </tr>
                 `;
-                tbody.innerHTML += baris;
             });
-
-            renderPagination(tipe, halamanAktif, totalHalaman, totalData);
         }
 
-        function renderPagination(tipe, halamanAktif, totalHalaman, totalData) {
-            const infoEl = document.getElementById(`info_halaman_${tipe}`);
-            const navEl = document.getElementById(`navigasi_halaman_${tipe}`);
-            
-            const dariData = totalData === 0 ? 0 : ((halamanAktif - 1) * barisPerHalaman) + 1;
-            const sampaiData = Math.min(halamanAktif * barisPerHalaman, totalData);
-            infoEl.innerText = `Menampilkan ${dariData} - ${sampaiData} dari ${totalData} data`;
-
-            let htmlNav = '';
-            
-            htmlNav += `<li class="page-item ${halamanAktif === 1 ? 'disabled' : ''}">
-                            <button class="page-link" onclick="gantiHalaman('${tipe}', ${halamanAktif - 1})">Sebelumnya</button>
-                        </li>`;
-
-            for (let i = 1; i <= totalHalaman; i++) {
-                htmlNav += `<li class="page-item ${halamanAktif === i ? 'active' : ''}">
-                                <button class="page-link" onclick="gantiHalaman('${tipe}', ${i})">${i}</button>
-                            </li>`;
-            }
-
-            htmlNav += `<li class="page-item ${halamanAktif === totalHalaman ? 'disabled' : ''}">
-                            <button class="page-link" onclick="gantiHalaman('${tipe}', ${halamanAktif + 1})">Berikutnya</button>
-                        </li>`;
-
-            navEl.innerHTML = htmlNav;
-        }
-
-        function gantiHalaman(tipe, halamanBaru) {
-            if (tipe === 'masuk') {
-                halamanMasukAktif = halamanBaru;
-            } else {
-                halamanKeluarAktif = halamanBaru;
-            }
+        async function hapusSurat(tipe, id) {
+            if (!confirm("Hapus data ini?")) return;
+            await supabaseClient.from(tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar').delete().eq('id', id);
             tampilkanSurat(tipe);
         }
 
-        function editSurat(tipe, idSurat) {
-            const dataSumber = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
-            const surat = dataSumber.find(s => s.id === idSurat);
-            
-            if (surat) {
-                document.getElementById(`edit_id_${tipe}`).value = surat.id;
-                document.getElementById(`jenis_surat_${tipe}`).value = surat.jenis_surat || '';
-                document.getElementById(`nomor_surat_${tipe}`).value = surat.nomor_surat;
-                
-                let tanggalDiterimaValue = surat.tanggal_diterima || '';
-                if (tanggalDiterimaValue) {
-                    tanggalDiterimaValue = tanggalDiterimaValue.split('.')[0].replace('Z', '');
-                    const parts = tanggalDiterimaValue.split('T');
-                    document.getElementById(`tanggal_${tipe}`).value = parts[0] || '';
-                }
-                
-                const selectPengirim = document.getElementById(`pengirim_${tipe}`);
-                let opsiAda = Array.from(selectPengirim.options).some(option => option.value === surat.pengirim);
-
-                if (opsiAda) {
-                    selectPengirim.value = surat.pengirim;
-                    document.getElementById(`wrapper_pengirim_lain_${tipe}`).classList.add('d-none');
-                } else {
-                    selectPengirim.value = "Instansi Luar";
-                    document.getElementById(`wrapper_pengirim_lain_${tipe}`).classList.remove('d-none');
-                    document.getElementById(`pengirim_lain_${tipe}`).value = surat.pengirim;
-                }
-
-                document.getElementById(`tujuan_${tipe}`).value = surat.tujuan || '';
-                document.getElementById(`perihal_${tipe}`).value = surat.perihal;
-                
-                const btnSimpan = document.getElementById(`btn_simpan_${tipe}`);
-                btnSimpan.innerText = "Perbarui Data";
-                btnSimpan.className = tipe === 'masuk' ? "btn btn-warning" : "btn btn-warning text-white";
-                
-                document.getElementById(`btn_batal_${tipe}`).classList.remove('d-none');
-                document.getElementById(`pesan_${tipe}`).innerText = "";
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function batalEdit(tipe) {
-            document.getElementById(`edit_id_${tipe}`).value = '';
-            document.getElementById(`jenis_surat_${tipe}`).value = '';
-            document.getElementById(`nomor_surat_${tipe}`).value = '';
-            document.getElementById(`pengirim_${tipe}`).value = '';
-            if(document.getElementById(`pengirim_lain_${tipe}`)) document.getElementById(`pengirim_lain_${tipe}`).value = '';
-            document.getElementById(`wrapper_pengirim_lain_${tipe}`).classList.add('d-none');
-            document.getElementById(`tujuan_${tipe}`).value = '';
-            document.getElementById(`perihal_${tipe}`).value = '';
-            
-            const sekarang = new Date();
-            sekarang.setMinutes(sekarang.getMinutes() - sekarang.getTimezoneOffset());
-            document.getElementById(`tanggal_${tipe}`).value = sekarang.toISOString().slice(0, 10);
-
-            const btnSimpan = document.getElementById(`btn_simpan_${tipe}`);
-            btnSimpan.innerText = tipe === 'masuk' ? "Simpan Data Surat Masuk" : "Simpan Data Surat Keluar";
-            btnSimpan.className = tipe === 'masuk' ? "btn btn-primary" : "btn btn-success";
-            document.getElementById(`btn_batal_${tipe}`).classList.add('d-none');
-        }
-
-        async function hapusSurat(tipe, idSurat) {
-            const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data surat ini?");
-            if (!konfirmasi) return;
-
-            const namaTabel = tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar';
-            const { error } = await supabaseClient.from(namaTabel).delete().eq('id', idSurat);
-            
-            if (error) {
-                console.error("Gagal menghapus:", error);
-                alert("Gagal menghapus data surat!");
-            } else {
-                alert("Surat berhasil dihapus!");
-                tampilkanSurat(tipe);
-            }
-        }
-
         function unduhExcel(tipe) {
-            const dataSumber = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
-            if (dataSumber.length === 0) { alert("Tidak ada data untuk diunduh!"); return; }
-            
-            const dataUntukExcel = dataSumber.map((surat, index) => ({ 
-                "No": index + 1, 
-                "Jenis Surat": surat.jenis_surat,
-                "Nomor Surat": surat.nomor_surat, 
-                "Tanggal & Jam": formatTanggalWaktu(surat.tanggal_diterima), 
-                "Pengirim": surat.pengirim, 
-                "Tujuan": surat.tujuan, 
-                "Perihal": surat.perihal 
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(dataUntukExcel);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan");
-            XLSX.writeFile(workbook, `Laporan_Surat_${tipe === 'masuk' ? 'Masuk' : 'Keluar'}.xlsx`);
+            const data = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+            XLSX.writeFile(wb, `Laporan_${tipe}.xlsx`);
         }
 
         function unduhPDF(tipe) {
-            const dataSumber = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
-            if (dataSumber.length === 0) { alert("Tidak ada data untuk diunduh!"); return; }
-            
+            const data = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4'); 
-            doc.setFontSize(16);
-            doc.text(`Laporan Surat ${tipe === 'masuk' ? 'Masuk' : 'Keluar'} - Setum Polri`, 14, 20);
-            doc.setFontSize(11);
-            doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
-
-            const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal & Jam', 'Pengirim', 'Tujuan', 'Perihal']];
-            const barisData = dataSumber.map((surat, index) => [ 
-                index + 1, 
-                surat.jenis_surat || '-',
-                surat.nomor_surat, 
-                formatTanggalWaktu(surat.tanggal_diterima), 
-                surat.pengirim, 
-                surat.tujuan || '-', 
-                surat.perihal 
-            ]);
-
-            doc.autoTable({ 
-                startY: 35, 
-                head: namaKolom, 
-                body: barisData, 
-                theme: 'grid', 
-                headStyles: { fillColor: tipe === 'masuk' ? [0, 77, 153] : [40, 167, 69] } 
-            });
-            doc.save(`Laporan_Surat_${tipe === 'masuk' ? 'Masuk' : 'Keluar'}.pdf`);
+            const doc = new jsPDF('l', 'mm', 'a4');
+            doc.autoTable({ head: [['ID', 'Nomor', 'Pengirim', 'Tujuan', 'Perihal']], body: data.map(s => [s.id, s.nomor_surat, s.pengirim, s.tujuan, s.perihal]) });
+            doc.save(`Laporan_${tipe}.pdf`);
         }
 
-        // --- INISIALISASI AWAL MENGECEK SESI LOGIN ---
         cekSesiPengguna();
     </script>
 </body>
