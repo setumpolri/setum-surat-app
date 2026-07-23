@@ -325,7 +325,6 @@
                         <h5 class="mb-0 text-primary fw-bold">Daftar & Laporan Surat Masuk</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Baris Filter & Tombol Reset Dipindahkan ke Sini -->
                         <div class="row g-2 mb-3 align-items-center">
                             <div class="col-md-3">
                                 <input type="text" id="cari_masuk" class="form-control" placeholder="Cari teks..." onkeyup="handlePencarian('masuk')">
@@ -620,7 +619,6 @@
                         <h5 class="mb-0 text-success fw-bold">Daftar & Laporan Surat Keluar</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Baris Filter & Tombol Reset Dipindahkan ke Sini -->
                         <div class="row g-2 mb-3 align-items-center">
                             <div class="col-md-3">
                                 <input type="text" id="cari_keluar" class="form-control" placeholder="Cari teks..." onkeyup="handlePencarian('keluar')">
@@ -1119,7 +1117,6 @@
             const tglSampai = document.getElementById(`sampai_${tipe}`).value;
             const btnReset = document.getElementById(`btn_reset_${tipe}`);
 
-            // Tombol reset akan muncul jika salah satu filter pencarian (teks atau tanggal) sedang diisi
             if (keyword.trim() !== "" || tglMulai !== "" || tglSampai !== "") {
                 btnReset.classList.remove('d-none');
             } else {
@@ -1130,15 +1127,10 @@
         }
 
         function resetPencarian(tipe) {
-            // Kosongkan seluruh kolom pencarian teks dan tanggal
             document.getElementById(`cari_${tipe}`).value = "";
             document.getElementById(`mulai_${tipe}`).value = "";
             document.getElementById(`sampai_${tipe}`).value = "";
-            
-            // Sembunyikan kembali tombol reset
             document.getElementById(`btn_reset_${tipe}`).classList.add('d-none');
-            
-            // Tampilkan ulang tabel secara penuh
             tampilkanSurat(tipe);
         }
 
@@ -1481,9 +1473,37 @@
             XLSX.writeFile(workbook, `Laporan_Surat_${tipe === 'masuk' ? 'Masuk' : 'Keluar'}.xlsx`);
         }
 
-        function unduhPDF(tipe) {
-            const dataSumber = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
-            if (dataSumber.length === 0) { alert("Tidak ada data untuk diunduh!"); return; }
+        // --- FUNGSI UNDUH PDF (MENARIK SEMUA DATA DARI DATABASE) ---
+        async function unduhPDF(tipe) {
+            const namaTabel = tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar';
+            const keyword = document.getElementById(`cari_${tipe}`).value;
+            const tanggalMulai = document.getElementById(`mulai_${tipe}`).value;
+            const tanggalSampai = document.getElementById(`sampai_${tipe}`).value;
+
+            let query = supabaseClient.from(namaTabel).select('*').order('dibuat_pada', { ascending: false });
+
+            if (keyword) {
+                query = query.or(`nomor_surat.ilike.%${keyword}%,pengirim.ilike.%${keyword}%,tujuan.ilike.%${keyword}%,jenis_surat.ilike.%${keyword}%`);
+            }
+            if (tanggalMulai) {
+                query = query.gte('tanggal_diterima', tanggalMulai);
+            }
+            if (tanggalSampai) {
+                query = query.lte('tanggal_diterima', tanggalSampai + 'T23:59:59');
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error("Gagal mengambil data untuk PDF:", error);
+                alert("Gagal mengunduh PDF karena kesalahan data.");
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                alert("Tidak ada data untuk diunduh!");
+                return;
+            }
             
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('l', 'mm', 'a4'); 
@@ -1493,7 +1513,7 @@
             doc.text("Dicetak pada: " + new Date().toLocaleDateString('id-ID'), 14, 28);
 
             const namaKolom = [['No', 'Jenis Surat', 'Nomor Surat', 'Tanggal & Jam', 'Pengirim', 'Tujuan', 'Perihal']];
-            const barisData = dataSumber.map((surat, index) => [ 
+            const barisData = data.map((surat, index) => [ 
                 index + 1, 
                 surat.jenis_surat || '-',
                 surat.nomor_surat, 
@@ -1510,6 +1530,7 @@
                 theme: 'grid', 
                 headStyles: { fillColor: tipe === 'masuk' ? [0, 77, 153] : [40, 167, 69] } 
             });
+            
             doc.save(`Laporan_Surat_${tipe === 'masuk' ? 'Masuk' : 'Keluar'}.pdf`);
         }
 
