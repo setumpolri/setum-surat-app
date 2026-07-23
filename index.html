@@ -65,7 +65,8 @@
                             <button class="nav-link text-white fw-bold" id="btn_menu_user" onclick="gantiMenu('user')">Manajemen User</button>
                         </li>
                     </ul>
-                    <button class="btn btn-outline-light btn-sm fw-bold" onclick="prosesLogout()">Keluar</button>
+                    <!-- Tombol Keluar yang dipicu ke fungsi konfirmasi -->
+                    <button class="btn btn-outline-light btn-sm fw-bold" onclick="konfirmasiLogout()">Keluar</button>
                 </div>
             </div>
         </nav>
@@ -837,10 +838,14 @@
             }
         }
 
-        async function prosesLogout() {
-            const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari aplikasi?");
-            if (!konfirmasi) return;
+        // --- FUNGSI LOGOUT DENGAN KOTAK DIALOG MODAL ---
+        function konfirmasiLogout() {
+            tampilkanModalKonfirmasi("Apakah Anda yakin ingin keluar dari aplikasi?", function() {
+                eksekusiLogout();
+            });
+        }
 
+        async function eksekusiLogout() {
             const { error } = await supabaseClient.auth.signOut();
             if (error) {
                 alert("Gagal keluar: " + error.message);
@@ -934,15 +939,21 @@
         }
 
         async function hapusUser(id) {
-            const konfirmasi = confirm("Yakin ingin menghapus profil ini? Akses user ke sistem akan dicabut.");
-            if (!konfirmasi) return;
+            konfirmasiHapusUser(id);
+        }
 
+        function konfirmasiHapusUser(id) {
+            tampilkanModalKonfirmasi("Yakin ingin menghapus profil ini? Akses user ke sistem akan dicabut.", function() {
+                eksekusiHapusUser(id);
+            });
+        }
+
+        async function eksekusiHapusUser(id) {
             const { error } = await supabaseClient.from('profiles').delete().eq('id', id);
             
             if (error) {
                 alert("Gagal menghapus profil: " + error.message);
             } else {
-                alert("Profil berhasil dihapus!");
                 tampilkanDaftarUser();
             }
         }
@@ -971,7 +982,7 @@
                     aksiHTML = `
                         <td class="text-center">
                             <button class="btn btn-warning btn-sm me-1" onclick="editUser('${usr.id}', '${usr.email}', '${usr.role}')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="hapusUser('${usr.id}')">Hapus</button>
+                            <button class="btn btn-danger btn-sm" onclick="konfirmasiHapusUser('${usr.id}')">Hapus</button>
                         </td>
                     `;
                 }
