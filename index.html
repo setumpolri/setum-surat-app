@@ -8,23 +8,27 @@
     <link rel="icon" type="image/png" href="Setum_Polri.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- CSS Tom Select untuk Dropdown bisa dicari -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- JS Tom Select -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
-    <!-- CSS Tambahan untuk Efek Blur pada Latar Belakang Modal -->
+    <!-- CSS Tambahan untuk Efek Blur dan Menu Aktif -->
     <style>
-        /* Efek blur pada latar belakang modal */
         .modal-backdrop.show {
             backdrop-filter: blur(5px);
             background-color: rgba(0, 0, 0, 0.4);
         }
 
-        /* Membuat background menu yang aktif menjadi warna putih dan teksnya menjadi gelap agar kontras */
         .nav-pills .nav-link.active {
             background-color: #ffffff !important;
-            color: #0d6efd !important; /* Menggunakan warna biru agar serasi */
+            color: #0d6efd !important;
         }
     </style>
 </head>
@@ -72,7 +76,6 @@
                             <button class="nav-link text-white fw-bold" id="btn_menu_user" onclick="gantiMenu('user')">Manajemen User</button>
                         </li>
                     </ul>
-                    <!-- Tombol Keluar yang dipicu ke fungsi konfirmasi -->
                     <button class="btn btn-outline-light btn-sm fw-bold" onclick="konfirmasiLogout()">Keluar</button>
                 </div>
             </div>
@@ -93,7 +96,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="jenis_surat_masuk" class="form-label fw-bold">Jenis Surat:</label>
-                                <select id="jenis_surat_masuk" class="form-select" required>
+                                <select id="jenis_surat_masuk" class="form-select searchable-select" required>
                                     <option value="" disabled selected>-- Pilih Jenis Surat --</option>
                                     <option value="Amanat">Amanat</option>
                                     <option value="Berita Acara">Berita Acara</option>
@@ -153,7 +156,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="pengirim_masuk" class="form-label fw-bold">Pengirim:</label>
-                                <select id="pengirim_masuk" class="form-select mb-2" onchange="cekPilihanPengirim('masuk')" required>
+                                <select id="pengirim_masuk" class="form-select searchable-select mb-2" onchange="cekPilihanPengirim('masuk')" required>
                                     <option value="" disabled selected>-- Pilih Pengirim --</option>
                                     <option value="Instansi Luar">Instansi Luar</option>
                                     <option value="Itwasum Polri">Itwasum Polri</option>
@@ -222,7 +225,7 @@
                                     <option value="Polda Papua Selatan">Polda Papua Selatan</option>
                                 </select>
 
-                                <div id="wrapper_pengirim_lain_masuk" class="d-none">
+                                <div id="wrapper_pengirim_lain_masuk" class="d-none mt-2">
                                     <label for="pengirim_lain_masuk" class="form-label fw-bold text-muted small">Silakan masukan pengirim disini:</label>
                                     <input type="text" id="pengirim_lain_masuk" class="form-control" placeholder="Masukkan nama instansi luar...">
                                 </div>
@@ -230,7 +233,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="tujuan_masuk" class="form-label fw-bold">Tujuan:</label>
-                                <select id="tujuan_masuk" class="form-select" required>
+                                <select id="tujuan_masuk" class="form-select searchable-select" required>
                                     <option value="" disabled selected>-- Pilih Tujuan --</option>
                                     <option value="Kapolri">Kapolri</option>
                                     <option value="Wakapolri">Wakapolri</option>
@@ -384,7 +387,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="jenis_surat_keluar" class="form-label fw-bold">Jenis Surat:</label>
-                                <select id="jenis_surat_keluar" class="form-select" required>
+                                <select id="jenis_surat_keluar" class="form-select searchable-select" required>
                                     <option value="" disabled selected>-- Pilih Jenis Surat --</option>
                                     <option value="Amanat">Amanat</option>
                                     <option value="Berita Acara">Berita Acara</option>
@@ -444,7 +447,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="pengirim_keluar" class="form-label fw-bold">Pengirim:</label>
-                                <select id="pengirim_keluar" class="form-select mb-2" onchange="cekPilihanPengirim('keluar')" required>
+                                <select id="pengirim_keluar" class="form-select searchable-select mb-2" onchange="cekPilihanPengirim('keluar')" required>
                                     <option value="" disabled selected>-- Pilih Pengirim --</option>
                                     <option value="Instansi Luar">Instansi Luar</option>
                                     <option value="Itwasum Polri">Itwasum Polri</option>
@@ -513,7 +516,7 @@
                                     <option value="Polda Papua Selatan">Polda Papua Selatan</option>
                                 </select>
 
-                                <div id="wrapper_pengirim_lain_keluar" class="d-none">
+                                <div id="wrapper_pengirim_lain_keluar" class="d-none mt-2">
                                     <label for="pengirim_lain_keluar" class="form-label fw-bold text-muted small">Silakan masukan pengirim disini:</label>
                                     <input type="text" id="pengirim_lain_keluar" class="form-control" placeholder="Masukkan nama instansi luar...">
                                 </div>
@@ -521,7 +524,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="tujuan_keluar" class="form-label fw-bold">Tujuan:</label>
-                                <select id="tujuan_keluar" class="form-select" required>
+                                <select id="tujuan_keluar" class="form-select searchable-select" required>
                                     <option value="" disabled selected>-- Pilih Tujuan --</option>
                                     <option value="Kapolri">Kapolri</option>
                                     <option value="Wakapolri">Wakapolri</option>
@@ -682,7 +685,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="role_baru" class="form-label fw-bold">Pilih Role / Jabatan:</label>
-                                <select id="role_baru" class="form-select" required>
+                                <select id="role_baru" class="form-select searchable-select" required>
                                     <option value="" disabled selected>-- Pilih Role / Jabatan --</option>
                                     <option value="super_admin">Super Admin</option>
                                     <option value="admin">Admin</option>
@@ -764,10 +767,25 @@
         let dataMasukTerakhir = [];
         let dataKeluarTerakhir = [];
         let rolePenggunaAktif = '';
+        let tomSelectInstances = {};
 
         const barisPerHalaman = 10;
         let halamanMasukAktif = 1;
         let halamanKeluarAktif = 1;
+
+        // Inisialisasi Tom Select pada elemen yang memiliki kelas searchable-select
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.searchable-select').forEach((el) => {
+                let instance = new TomSelect(el, {
+                    create: false,
+                    sortField: {
+                        field: "text",
+                        direction: "asc"
+                    }
+                });
+                tomSelectInstances[el.id] = instance;
+            });
+        });
 
         // --- 2. SISTEM AUTENTIKASI & CEK ROLE ---
         async function cekSesiPengguna() {
@@ -845,7 +863,6 @@
             }
         }
 
-        // --- FUNGSI LOGOUT DENGAN KOTAK DIALOG MODAL ---
         function konfirmasiLogout() {
             tampilkanModalKonfirmasi("Apakah Anda yakin ingin keluar dari aplikasi?", function() {
                 eksekusiLogout();
@@ -922,7 +939,12 @@
             document.getElementById('email_baru').value = email;
             document.getElementById('email_baru').disabled = true;
             document.getElementById('wrapper_password_baru').classList.add('d-none');
-            document.getElementById('role_baru').value = role;
+            
+            if(tomSelectInstances['role_baru']) {
+                tomSelectInstances['role_baru'].setValue(role);
+            } else {
+                document.getElementById('role_baru').value = role;
+            }
 
             document.getElementById('judul_form_user').innerText = "Edit Role User";
             document.getElementById('btn_simpan_user').innerText = "Perbarui Role";
@@ -937,16 +959,17 @@
             document.getElementById('email_baru').disabled = false;
             document.getElementById('password_baru').value = '';
             document.getElementById('wrapper_password_baru').classList.remove('d-none');
-            document.getElementById('role_baru').value = '';
+            
+            if(tomSelectInstances['role_baru']) {
+                tomSelectInstances['role_baru'].clear();
+            } else {
+                document.getElementById('role_baru').value = '';
+            }
 
             document.getElementById('judul_form_user').innerText = "Formulir Tambah User Baru";
             document.getElementById('btn_simpan_user').innerText = "Buat Akun User Baru";
             document.getElementById('btn_batal_user').classList.add('d-none');
             document.getElementById('pesan_user').innerText = "";
-        }
-
-        async function hapusUser(id) {
-            konfirmasiHapusUser(id);
         }
 
         function konfirmasiHapusUser(id) {
@@ -1019,9 +1042,9 @@
             sectionKeluar.classList.add('d-none');
             sectionUser.classList.add('d-none');
 
-            btnMasuk.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
-            btnKeluar.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
-            if(btnUser) btnUser.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
+            btnMasuk.classList.remove('active');
+            btnKeluar.classList.remove('active');
+            if(btnUser) btnUser.classList.remove('active');
 
             if (menu === 'masuk') {
                 sectionMasuk.classList.remove('d-none');
@@ -1070,7 +1093,8 @@
         }
 
         function cekPilihanPengirim(tipe) {
-            const pilihan = document.getElementById(`pengirim_${tipe}`).value;
+            const selectEl = document.getElementById(`pengirim_${tipe}`);
+            const pilihan = selectEl.value;
             const wrapperLain = document.getElementById(`wrapper_pengirim_lain_${tipe}`);
             const inputLain = document.getElementById(`pengirim_lain_${tipe}`);
 
@@ -1284,8 +1308,6 @@
             const modalInstance = new bootstrap.Modal(modalEl);
             
             const btnYa = document.getElementById('btnKonfirmasiYa');
-            
-            // Hapus event listener lama agar tidak menumpuk
             const btnBaru = btnYa.cloneNode(true);
             btnYa.parentNode.replaceChild(btnBaru, btnYa);
 
@@ -1315,7 +1337,14 @@
             
             if (surat) {
                 document.getElementById(`edit_id_${tipe}`).value = surat.id;
-                document.getElementById(`jenis_surat_${tipe}`).value = surat.jenis_surat || '';
+                
+                // Update nilai Tom Select untuk Jenis Surat
+                if(tomSelectInstances[`jenis_surat_${tipe}`]) {
+                    tomSelectInstances[`jenis_surat_${tipe}`].setValue(surat.jenis_surat || '');
+                } else {
+                    document.getElementById(`jenis_surat_${tipe}`).value = surat.jenis_surat || '';
+                }
+
                 document.getElementById(`nomor_surat_${tipe}`).value = surat.nomor_surat;
                 
                 let tanggalDiterimaValue = surat.tanggal_diterima || '';
@@ -1325,19 +1354,33 @@
                     document.getElementById(`tanggal_${tipe}`).value = parts[0] || '';
                 }
                 
-                const selectPengirim = document.getElementById(`pengirim_${tipe}`);
-                let opsiAda = Array.from(selectPengirim.options).some(option => option.value === surat.pengirim);
+                const selectPengirimEl = document.getElementById(`pengirim_${tipe}`);
+                let opsiAda = Array.from(selectPengirimEl.options).some(option => option.value === surat.pengirim);
 
                 if (opsiAda) {
-                    selectPengirim.value = surat.pengirim;
+                    if(tomSelectInstances[`pengirim_${tipe}`]) {
+                        tomSelectInstances[`pengirim_${tipe}`].setValue(surat.pengirim);
+                    } else {
+                        selectPengirimEl.value = surat.pengirim;
+                    }
                     document.getElementById(`wrapper_pengirim_lain_${tipe}`).classList.add('d-none');
                 } else {
-                    selectPengirim.value = "Instansi Luar";
+                    if(tomSelectInstances[`pengirim_${tipe}`]) {
+                        tomSelectInstances[`pengirim_${tipe}`].setValue("Instansi Luar");
+                    } else {
+                        selectPengirimEl.value = "Instansi Luar";
+                    }
                     document.getElementById(`wrapper_pengirim_lain_${tipe}`).classList.remove('d-none');
                     document.getElementById(`pengirim_lain_${tipe}`).value = surat.pengirim;
                 }
 
-                document.getElementById(`tujuan_${tipe}`).value = surat.tujuan || '';
+                // Update nilai Tom Select untuk Tujuan
+                if(tomSelectInstances[`tujuan_${tipe}`]) {
+                    tomSelectInstances[`tujuan_${tipe}`].setValue(surat.tujuan || '');
+                } else {
+                    document.getElementById(`tujuan_${tipe}`).value = surat.tujuan || '';
+                }
+
                 document.getElementById(`perihal_${tipe}`).value = surat.perihal;
                 
                 const btnSimpan = document.getElementById(`btn_simpan_${tipe}`);
@@ -1352,12 +1395,15 @@
 
         function batalEdit(tipe) {
             document.getElementById(`edit_id_${tipe}`).value = '';
-            document.getElementById(`jenis_surat_${tipe}`).value = '';
+            
+            if(tomSelectInstances[`jenis_surat_${tipe}`]) tomSelectInstances[`jenis_surat_${tipe}`].clear();
             document.getElementById(`nomor_surat_${tipe}`).value = '';
-            document.getElementById(`pengirim_${tipe}`).value = '';
+            
+            if(tomSelectInstances[`pengirim_${tipe}`]) tomSelectInstances[`pengirim_${tipe}`].clear();
             if(document.getElementById(`pengirim_lain_${tipe}`)) document.getElementById(`pengirim_lain_${tipe}`).value = '';
             document.getElementById(`wrapper_pengirim_lain_${tipe}`).classList.add('d-none');
-            document.getElementById(`tujuan_${tipe}`).value = '';
+            
+            if(tomSelectInstances[`tujuan_${tipe}`]) tomSelectInstances[`tujuan_${tipe}`].clear();
             document.getElementById(`perihal_${tipe}`).value = '';
             
             const sekarang = new Date();
