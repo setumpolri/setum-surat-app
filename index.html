@@ -12,6 +12,14 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- CSS Tambahan untuk Efek Blur pada Latar Belakang Modal -->
+    <style>
+        .modal-backdrop.show {
+            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -717,6 +725,25 @@
         </div>
     </div>
 
+    <!-- ================= KOTAK DIALOG / MODAL KONFIRMASI KUSTOM ================= -->
+    <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="modalKonfirmasiLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalKonfirmasiLabel">Konfirmasi Aksi</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p id="teksPesanKonfirmasi" class="fs-6 mb-0 text-center fw-medium">Apakah anda ingin mengubah data ini?</p>
+                </div>
+                <div class="modal-footer justify-content-center bg-light">
+                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="btnKonfirmasiYa" class="btn btn-primary px-4 fw-bold">Ya, Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Script Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1174,8 +1201,8 @@
                 const nomorUrut = dariIndex + index + 1;
                 
                 const isiTombol = `
-                    <button class="btn btn-warning btn-sm mb-1 w-100" onclick="editSurat('${tipe}', '${surat.id}')">Edit</button>
-                    <button class="btn btn-danger btn-sm w-100" onclick="hapusSurat('${tipe}', '${surat.id}')">Hapus</button>
+                    <button class="btn btn-warning btn-sm mb-1 w-100" onclick="konfirmasiEdit('${tipe}', '${surat.id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm w-100" onclick="konfirmasiHapus('${tipe}', '${surat.id}')">Hapus</button>
                 `;
 
                 const baris = `
@@ -1232,12 +1259,39 @@
             tampilkanSurat(tipe);
         }
 
-        // --- FUNGSI EDIT DENGAN KOTAK DIALOG KONFIRMASI ---
-        function editSurat(tipe, idSurat) {
-            // Memunculkan kotak dialog konfirmasi sebelum form edit dimuat
-            const konfirmasi = confirm("Apakah anda ingin mengubah data ini?");
-            if (!konfirmasi) return;
+        // --- SISTEM KOTAK DIALOG MODAL KUSTOM (DENGAN EFEK BLUR) ---
+        function tampilkanModalKonfirmasi(pesan, fungsiEksekusi) {
+            document.getElementById('teksPesanKonfirmasi').innerText = pesan;
+            const modalEl = document.getElementById('modalKonfirmasi');
+            const modalInstance = new bootstrap.Modal(modalEl);
+            
+            const btnYa = document.getElementById('btnKonfirmasiYa');
+            
+            // Hapus event listener lama agar tidak menumpuk
+            const btnBaru = btnYa.cloneNode(true);
+            btnYa.parentNode.replaceChild(btnBaru, btnYa);
 
+            btnBaru.addEventListener('click', function() {
+                modalInstance.hide();
+                fungsiEksekusi();
+            });
+
+            modalInstance.show();
+        }
+
+        function konfirmasiEdit(tipe, idSurat) {
+            tampilkanModalKonfirmasi("Apakah anda ingin mengubah data ini?", function() {
+                eksekusiEdit(tipe, idSurat);
+            });
+        }
+
+        function konfirmasiHapus(tipe, idSurat) {
+            tampilkanModalKonfirmasi("Apakah Anda yakin ingin menghapus data surat ini?", function() {
+                eksekusiHapus(tipe, idSurat);
+            });
+        }
+
+        function eksekusiEdit(tipe, idSurat) {
             const dataSumber = tipe === 'masuk' ? dataMasukTerakhir : dataKeluarTerakhir;
             const surat = dataSumber.find(s => s.id === idSurat);
             
@@ -1298,10 +1352,7 @@
             document.getElementById(`btn_batal_${tipe}`).classList.add('d-none');
         }
 
-        async function hapusSurat(tipe, idSurat) {
-            const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data surat ini?");
-            if (!konfirmasi) return;
-
+        async function eksekusiHapus(tipe, idSurat) {
             const namaTabel = tipe === 'masuk' ? 'surat_masuk' : 'surat_keluar';
             const { error } = await supabaseClient.from(namaTabel).delete().eq('id', idSurat);
             
@@ -1309,7 +1360,6 @@
                 console.error("Gagal menghapus:", error);
                 alert("Gagal menghapus data surat!");
             } else {
-                alert("Surat berhasil dihapus!");
                 tampilkanSurat(tipe);
             }
         }
