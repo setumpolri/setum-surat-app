@@ -843,14 +843,15 @@
             pesanEl.className = "mt-3 text-center small fw-bold text-primary";
             pesanEl.innerText = "Memeriksa data akun...";
 
-            // 1. Cek terlebih dahulu apakah email terdaftar di tabel profiles
+            // 1. Cek apakah email terdaftar di tabel profiles
             const { data: cekUser, error: errCek } = await supabaseClient
                 .from('profiles')
                 .select('email')
                 .eq('email', email)
-                .maybeSingle();
+                .single();
 
-            if (!cekUser) {
+            // Jika error atau data user kosong, berarti email memang belum terdaftar
+            if (errCek || !cekUser) {
                 pesanEl.className = "mt-3 text-center small fw-bold text-danger";
                 pesanEl.innerText = "Email anda belum terdaftar, silakan hubungi Admin";
                 return;
@@ -858,7 +859,7 @@
 
             pesanEl.innerText = "Memproses masuk...";
 
-            // 2. Jika email terdaftar, lanjutkan proses masuk dengan password
+            // 2. Jika email ditemukan di database, lakukan autentikasi password
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
@@ -866,6 +867,7 @@
 
             if (error) {
                 pesanEl.className = "mt-3 text-center small fw-bold text-danger";
+                // Tangani khusus jika kredensial/password salah
                 if (error.message.includes("Invalid login credentials")) {
                     pesanEl.innerText = "Gagal masuk: Password Anda salah!";
                 } else {
