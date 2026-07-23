@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>e-Pos Setum Polri</title>
     
-    <!-- Ikon/Logo Tab Browser -->
     <link rel="icon" type="image/png" href="Setum_Polri.png">
-
-    <!-- CSS Bootstrap 5 untuk Desain UI/UX Modern -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Library Supabase, SheetJS (Excel), dan jsPDF (PDF) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -42,7 +38,6 @@
 
     <!-- ================= APLIKASI UTAMA ================= -->
     <div id="app_utama" class="d-none">
-        <!-- Header / Navbar Resmi dengan Menu Pilihan -->
         <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
             <div class="container d-flex justify-content-between align-items-center">
                 <span class="navbar-brand mb-0 h1 d-flex align-items-center">
@@ -51,7 +46,6 @@
                 </span>
                 
                 <div class="d-flex align-items-center">
-                    <!-- MENU NAVIGASI -->
                     <ul class="nav nav-pills me-3">
                         <li class="nav-item">
                             <button class="nav-link text-white active fw-bold" id="btn_menu_masuk" onclick="gantiMenu('masuk')">Surat Masuk</button>
@@ -63,7 +57,6 @@
                             <button class="nav-link text-white fw-bold" id="btn_menu_user" onclick="gantiMenu('user')">Manajemen User</button>
                         </li>
                     </ul>
-                    <!-- TOMBOL KELUAR -->
                     <button class="btn btn-outline-light btn-sm fw-bold" onclick="prosesLogout()">Keluar</button>
                 </div>
             </div>
@@ -330,8 +323,8 @@
                                 </div>
                             </div>
                             <div class="col-md-3 text-md-end">
-                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('masuk')">📥 Unduh Excel</button>
-                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('masuk')">📄 Unduh PDF</button>
+                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('masuk')">📥 Excel</button>
+                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('masuk')">📄 PDF</button>
                             </div>
                         </div>
 
@@ -346,7 +339,7 @@
                                         <th style="width: 15%;">Pengirim</th>
                                         <th style="width: 13%;">Tujuan</th>
                                         <th style="width: 15%;">Perihal</th>
-                                        <th style="width: 10%;">Aksi</th>
+                                        <th id="th_aksi_masuk" style="width: 10%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabel_masuk">
@@ -354,8 +347,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Navigasi Pagination Surat Masuk -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div id="info_halaman_masuk" class="text-muted small"></div>
                             <ul id="navigasi_halaman_masuk" class="pagination pagination-sm mb-0"></ul>
@@ -623,8 +614,8 @@
                                 </div>
                             </div>
                             <div class="col-md-3 text-md-end">
-                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('keluar')">📥 Unduh Excel</button>
-                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('keluar')">📄 Unduh PDF</button>
+                                <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('keluar')">📥 Excel</button>
+                                <button class="btn btn-danger btn-sm" onclick="unduhPDF('keluar')">📄 PDF</button>
                             </div>
                         </div>
 
@@ -639,7 +630,7 @@
                                         <th style="width: 15%;">Pengirim</th>
                                         <th style="width: 13%;">Tujuan</th>
                                         <th style="width: 15%;">Perihal</th>
-                                        <th style="width: 10%;">Aksi</th>
+                                        <th id="th_aksi_keluar" style="width: 10%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabel_keluar">
@@ -647,8 +638,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Navigasi Pagination Surat Keluar -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div id="info_halaman_keluar" class="text-muted small"></div>
                             <ul id="navigasi_halaman_keluar" class="pagination pagination-sm mb-0"></ul>
@@ -664,7 +653,6 @@
                         <h5 class="mb-0 text-dark fw-bold" id="judul_form_user">Formulir Tambah User Baru</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Input tersembunyi untuk menyimpan ID saat mode Edit -->
                         <input type="hidden" id="edit_user_id"> 
                         
                         <div class="row">
@@ -694,7 +682,6 @@
                             </div>
                         </div>
                         
-                        <!-- Tombol aksi untuk Simpan dan Batal -->
                         <div class="d-flex gap-2">
                             <button id="btn_simpan_user" class="btn btn-dark fw-bold" onclick="simpanUser()">Buat Akun User Baru</button>
                             <button id="btn_batal_user" class="btn btn-secondary fw-bold d-none" onclick="batalEditUser()">Batal Edit</button>
@@ -715,7 +702,6 @@
                                         <th>No</th>
                                         <th>Email</th>
                                         <th>Role / Peran</th>
-                                        <!-- Kolom Aksi yang akan disembunyikan jika bukan Super Admin -->
                                         <th id="kolom_aksi_user" class="d-none" style="width: 20%;">Aksi</th>
                                     </tr>
                                 </thead>
@@ -727,6 +713,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -743,7 +730,6 @@
         let dataKeluarTerakhir = [];
         let rolePenggunaAktif = '';
 
-        // Variabel untuk Pagination
         const barisPerHalaman = 10;
         let halamanMasukAktif = 1;
         let halamanKeluarAktif = 1;
@@ -764,10 +750,9 @@
                 if (profile) {
                     rolePenggunaAktif = profile.role;
                 } else {
-                    rolePenggunaAktif = 'bamin_banum'; // Nilai default jika belum diatur
+                    rolePenggunaAktif = 'bamin_banum'; 
                 }
 
-                // Menambahkan 'kasubbag' ke daftar yang bisa melihat menu Manajemen User
                 if (rolePenggunaAktif === 'super_admin' || rolePenggunaAktif === 'admin' || rolePenggunaAktif === 'kasubbag') {
                     document.getElementById('li_menu_user').classList.remove('d-none');
                 } else {
@@ -787,6 +772,7 @@
                 document.getElementById('app_utama').classList.add('d-none');
             }
         }
+
         async function prosesLogin() {
             const email = document.getElementById('email_login').value;
             const password = document.getElementById('password_login').value;
@@ -830,16 +816,13 @@
             }
         }
 
-        // --- CRUD MANAJEMEN USER (KHUSUS SUPER ADMIN) ---
-
-        // 1. Fungsi Create & Update digabung menjadi simpanUser
+        // --- CRUD MANAJEMEN USER ---
         async function simpanUser() {
             const editId = document.getElementById('edit_user_id').value;
             const email = document.getElementById('email_baru').value;
             const role = document.getElementById('role_baru').value;
             const pesanEl = document.getElementById('pesan_user');
 
-            // --- MODE UPDATE (Hanya Role yang bisa diedit) ---
             if (editId) {
                 pesanEl.className = "mt-3 fw-bold text-primary";
                 pesanEl.innerText = "Memperbarui role user...";
@@ -855,9 +838,7 @@
                     batalEditUser();
                     tampilkanDaftarUser();
                 }
-            } 
-            // --- MODE CREATE (Tambah User Baru) ---
-            else {
+            } else {
                 const password = document.getElementById('password_baru').value;
                 if (!email || !password || !role) {
                     alert("Semua kolom wajib diisi untuk membuat akun baru!");
@@ -891,12 +872,11 @@
             }
         }
 
-        // 2. Fungsi untuk menampilkan data ke formulir saat tombol Edit ditekan
         function editUser(id, email, role) {
             document.getElementById('edit_user_id').value = id;
             document.getElementById('email_baru').value = email;
-            document.getElementById('email_baru').disabled = true; // Kunci email agar tidak diubah
-            document.getElementById('wrapper_password_baru').classList.add('d-none'); // Sembunyikan input password
+            document.getElementById('email_baru').disabled = true;
+            document.getElementById('wrapper_password_baru').classList.add('d-none');
             document.getElementById('role_baru').value = role;
 
             document.getElementById('judul_form_user').innerText = "Edit Role User";
@@ -906,7 +886,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 3. Fungsi untuk membatalkan proses Edit
         function batalEditUser() {
             document.getElementById('edit_user_id').value = '';
             document.getElementById('email_baru').value = '';
@@ -921,7 +900,6 @@
             document.getElementById('pesan_user').innerText = "";
         }
 
-        // 4. Fungsi Delete (Hapus) Profil User
         async function hapusUser(id) {
             const konfirmasi = confirm("Yakin ingin menghapus profil ini? Akses user ke sistem akan dicabut.");
             if (!konfirmasi) return;
@@ -936,7 +914,6 @@
             }
         }
 
-        // 5. Fungsi Read (Tampilkan Tabel) yang diperbarui dengan hak akses Aksi
         async function tampilkanDaftarUser() {
             const { data, error } = await supabaseClient.from('profiles').select('*');
             const tbody = document.getElementById('tabel_user');
@@ -944,7 +921,6 @@
             
             tbody.innerHTML = '';
 
-            // Hanya tampilkan Header 'Aksi' jika role adalah super_admin
             if (rolePenggunaAktif === 'super_admin') {
                 kolomAksi.classList.remove('d-none');
             } else {
@@ -957,7 +933,6 @@
             }
 
             data.forEach((usr, idx) => {
-                // Siapkan tombol aksi, hanya render jika pengguna login adalah super_admin
                 let aksiHTML = '';
                 if (rolePenggunaAktif === 'super_admin') {
                     aksiHTML = `
@@ -979,7 +954,7 @@
             });
         }
 
-        // --- NAVIGASI MENU DENGAN PENYIMPANAN LOCALSTORAGE ---
+        // --- NAVIGASI MENU ---
         function gantiMenu(menu, simpanKeStorage = true) {
             const sectionMasuk = document.getElementById('section_surat_masuk');
             const sectionKeluar = document.getElementById('section_surat_keluar');
@@ -993,22 +968,21 @@
             sectionKeluar.classList.add('d-none');
             sectionUser.classList.add('d-none');
 
-            // Menghapus semua kelas warna background pada tombol menu
             btnMasuk.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
             btnKeluar.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
             if(btnUser) btnUser.classList.remove('active', 'bg-primary', 'bg-success', 'bg-dark');
 
             if (menu === 'masuk') {
                 sectionMasuk.classList.remove('d-none');
-                btnMasuk.classList.add('active'); // Hanya status active tanpa warna latar khusus
+                btnMasuk.classList.add('active'); 
                 if (simpanKeStorage) localStorage.setItem('menuAktif', 'masuk');
             } else if (menu === 'keluar') {
                 sectionKeluar.classList.remove('d-none');
-                btnKeluar.classList.add('active'); // Hanya status active tanpa warna latar khusus
+                btnKeluar.classList.add('active'); 
                 if (simpanKeStorage) localStorage.setItem('menuAktif', 'keluar');
             } else if (menu === 'user') {
                 sectionUser.classList.remove('d-none');
-                btnUser.classList.add('active'); // Hanya status active tanpa warna latar khusus
+                btnUser.classList.add('active'); 
                 if (simpanKeStorage) localStorage.setItem('menuAktif', 'user');
                 tampilkanDaftarUser();
             }
@@ -1183,10 +1157,8 @@
             const tbody = document.getElementById(`tabel_${tipe}`);
             const thAksi = document.getElementById(`th_aksi_${tipe}`);
             
-            // Logika HANYA 3 role ini yang memiliki Hak Akses Penuh (CRUD)
             const adaHakAksi = (rolePenggunaAktif === 'super_admin' || rolePenggunaAktif === 'admin' || rolePenggunaAktif === 'kasubbag');
 
-            // Menyembunyikan atau menampilkan header kolom Aksi
             if (adaHakAksi) {
                 if (thAksi) thAksi.classList.remove('d-none');
             } else {
@@ -1196,7 +1168,6 @@
             tbody.innerHTML = ''; 
 
             if (data.length === 0) {
-                // Menyesuaikan rentang kolom (colspan) tabel saat kosong
                 const jumlahKolom = adaHakAksi ? "8" : "7";
                 tbody.innerHTML = `<tr><td colspan="${jumlahKolom}" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
                 document.getElementById(`info_halaman_${tipe}`).innerText = "Menampilkan 0 dari 0 data";
@@ -1209,7 +1180,6 @@
                 
                 let htmlKolomAksi = '';
                 
-                // Jika pengguna ada di dalam whitelist (adaHakAksi), render sel tombol
                 if (adaHakAksi) {
                     const isiTombol = `
                         <button class="btn btn-warning btn-sm mb-1 w-100" onclick="editSurat('${tipe}', '${surat.id}')">Edit</button>
