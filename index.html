@@ -681,15 +681,93 @@
                         <input type="hidden" id="edit_user_id"> 
                         
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <!-- 1. Email User -->
+                            <div class="col-md-6 mb-3">
                                 <label for="email_baru" class="form-label fw-bold">Email User:</label>
                                 <input type="email" id="email_baru" class="form-control" placeholder="email@polri.go.id" required>
                             </div>
-                            <div class="col-md-4 mb-3" id="wrapper_password_baru">
+                        
+                            <!-- 2. Satuan Kerja (Dipindahkan ke sini, tepat setelah Email) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="satker_baru" class="form-label fw-bold">Satuan Kerja:</label>
+                                <select id="satker_baru" class="form-select searchable-select" required>
+                                    <option value="" disabled selected>-- Pilih Satuan Kerja --</option>
+                                    <option value="Instansi Luar">Instansi Luar</option>
+                                    <option value="Itwasum Polri">Itwasum Polri</option>
+                                    <option value="Bareskrim Polri">Bareskrim Polri</option>
+                                    <option value="Baharkam Polri">Baharkam Polri</option>
+                                    <option value="Korbrimob Polri">Korbrimob Polri</option>
+                                    <option value="Baintelkam Polri">Baintelkam Polri</option>
+                                    <option value="Lemdiklat Polri">Lemdiklat Polri</option>
+                                    <option value="Stamaops Polri">Stamaops Polri</option>
+                                    <option value="Stamarena Polri">Stamarena Polri</option>
+                                    <option value="Korlantas Polri">Korlantas Polri</option>
+                                    <option value="Kortastipidkor Polri">Kortastipidkor Polri</option>
+                                    <option value="Densus 88 AT Polri">Densus 88 AT Polri</option>
+                                    <option value="SDM Polri">SDM Polri</option>
+                                    <option value="Slog Polri">Slog Polri</option>
+                                    <option value="Divpropam Polri">Divpropam Polri</option>
+                                    <option value="Divkum Polri">Divkum Polri</option>
+                                    <option value="Divhumas Polri">Divhumas Polri</option>
+                                    <option value="Div TIK Polri">Div TIK Polri</option>
+                                    <option value="Divhubinter Polri">Divhubinter Polri</option>
+                                    <option value="Pusdokkes Polri">Pusdokkes Polri</option>
+                                    <option value="Sahli Kapolri">Sahli Kapolri</option>
+                                    <option value="Puslitbang Polri">Puslitbang Polri</option>
+                                    <option value="Puskeu Polri">Puskeu Polri</option>
+                                    <option value="Pusjarah Polri">Pusjarah Polri</option>
+                                    <option value="Spripim Polri">Spripim Polri</option>
+                                    <option value="Yanma Polri">Yanma Polri</option>
+                                    <option value="Setum Polri">Setum Polri</option>
+                                    <option value="Polda Aceh">Polda Aceh</option>
+                                    <option value="Polda Sumatera Utara">Polda Sumatera Utara</option>
+                                    <option value="Polda Sumatera Barat">Polda Sumatera Barat</option>
+                                    <option value="Polda Riau">Polda Riau</option>
+                                    <option value="Polda Kepulauan Riau">Polda Kepulauan Riau</option>
+                                    <option value="Polda Jambi">Polda Jambi</option>
+                                    <option value="Polda Bengkulu">Polda Bengkulu</option>
+                                    <option value="Polda Sumatera Selatan">Polda Sumatera Selatan</option>
+                                    <option value="Polda Kepulauan Bangka Belitung">Polda Kepulauan Bangka Belitung</option>
+                                    <option value="Polda Lampung">Polda Lampung</option>
+                                    <option value="Polda Metro Jaya">Polda Metro Jaya</option>
+                                    <option value="Polda Banten">Polda Banten</option>
+                                    <option value="Polda Jawa Barat">Polda Jawa Barat</option>
+                                    <option value="Polda Jawa Tengah">Polda Jawa Tengah</option>
+                                    <option value="Polda Daerah Istimewa Yogyakarta">Polda Daerah Istimewa Yogyakarta</option>
+                                    <option value="Polda Jawa Timur">Polda Jawa Timur</option>
+                                    <option value="Polda Bali">Polda Bali</option>
+                                    <option value="Polda Nusa Tenggara Barat">Polda Nusa Tenggara Barat</option>
+                                    <option value="Polda Nusa Tenggara Timur">Polda Nusa Tenggara Timur</option>
+                                    <option value="Polda Kalimantan Barat">Polda Kalimantan Barat</option>
+                                    <option value="Polda Kalimantan Tengah">Polda Kalimantan Tengah</option>
+                                    <option value="Polda Kalimantan Selatan">Polda Kalimantan Selatan</option>
+                                    <option value="Polda Kalimantan Timur">Polda Kalimantan Timur</option>
+                                    <option value="Polda Kalimantan Utara">Polda Kalimantan Utara</option>
+                                    <option value="Polda Sulawesi Utara">Polda Sulawesi Utara</option>
+                                    <option value="Polda Gorontalo">Polda Gorontalo</option>
+                                    <option value="Polda Sulawesi Tengah">Polda Sulawesi Tengah</option>
+                                    <option value="Polda Sulawesi Barat">Polda Sulawesi Barat</option>
+                                    <option value="Polda Sulawesi Selatan">Polda Sulawesi Selatan</option>
+                                    <option value="Polda Sulawesi Tenggara">Polda Sulawesi Tenggara</option>
+                                    <option value="Polda Maluku">Polda Maluku</option>
+                                    <option value="Polda Maluku Utara">Polda Maluku Utara</option>
+                                    <option value="Polda Papua Barat">Polda Papua Barat</option>
+                                    <option value="Polda Papua Barat Daya">Polda Papua Barat Daya</option>
+                                    <option value="Polda Papua">Polda Papua</option>
+                                    <option value="Polda Papua Tengah">Polda Papua Tengah</option>
+                                    <option value="Polda Papua Pegunungan">Polda Papua Pegunungan</option>
+                                    <option value="Polda Papua Selatan">Polda Papua Selatan</option>
+                                </select>
+                            </div>
+                        
+                            <!-- 3. Password Sementara -->
+                            <div class="col-md-6 mb-3" id="wrapper_password_baru">
                                 <label for="password_baru" class="form-label fw-bold">Password Sementara:</label>
                                 <input type="password" id="password_baru" class="form-control" placeholder="Minimal 6 karakter" required>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            
+                            <!-- 4. Pilih Role / Jabatan -->
+                            <div class="col-md-6 mb-3">
                                 <label for="role_baru" class="form-label fw-bold">Pilih Role / Jabatan:</label>
                                 <select id="role_baru" class="form-select searchable-select" required>
                                     <option value="" disabled selected>-- Pilih Role / Jabatan --</option>
@@ -727,6 +805,7 @@
                                         <th>No</th>
                                         <th>Email</th>
                                         <th>Role / Peran</th>
+                                        <th>Satuan Kerja</th>
                                         <th id="kolom_aksi_user" class="d-none" style="width: 20%;">Aksi</th>
                                     </tr>
                                 </thead>
@@ -896,26 +975,27 @@
             const editId = document.getElementById('edit_user_id').value;
             const email = document.getElementById('email_baru').value;
             const role = document.getElementById('role_baru').value;
+            const satker = document.getElementById('satker_baru').value;
             const pesanEl = document.getElementById('pesan_user');
 
             if (editId) {
                 pesanEl.className = "mt-3 fw-bold text-primary";
-                pesanEl.innerText = "Memperbarui role user...";
+                pesanEl.innerText = "Memperbarui data user...";
 
-                const { error } = await supabaseClient.from('profiles').update({ role: role }).eq('id', editId);
+                const { error } = await supabaseClient.from('profiles').update({ role: role, satker: satker }).eq('id', editId);
                 
                 if (error) {
                     pesanEl.className = "mt-3 fw-bold text-danger";
                     pesanEl.innerText = "Gagal memperbarui: " + error.message;
                 } else {
                     pesanEl.className = "mt-3 fw-bold text-success";
-                    pesanEl.innerText = "Role berhasil diperbarui!";
+                    pesanEl.innerText = "Data user berhasil diperbarui!";
                     batalEditUser();
                     tampilkanDaftarUser();
                 }
             } else {
                 const password = document.getElementById('password_baru').value;
-                if (!email || !password || !role) {
+                if (!email || !password || !role || !satker) {
                     alert("Semua kolom wajib diisi untuk membuat akun baru!");
                     return;
                 }
@@ -931,12 +1011,12 @@
                 } else if (data && data.user) {
                     const userId = data.user.id;
                     const { error: profileError } = await supabaseClient.from('profiles').insert([
-                        { id: userId, email: email, role: role }
+                        { id: userId, email: email, role: role, satker: satker }
                     ]);
 
                     if (profileError) {
                         pesanEl.className = "mt-3 fw-bold text-danger";
-                        pesanEl.innerText = "Gagal menyimpan role: " + profileError.message;
+                        pesanEl.innerText = "Gagal menyimpan profil: " + profileError.message;
                     } else {
                         pesanEl.className = "mt-3 fw-bold text-success";
                         pesanEl.innerText = "Berhasil membuat user baru!";
@@ -947,7 +1027,7 @@
             }
         }
 
-        function editUser(id, email, role) {
+        function editUser(id, email, role, satker) {
             document.getElementById('edit_user_id').value = id;
             document.getElementById('email_baru').value = email;
             document.getElementById('email_baru').disabled = true;
@@ -959,8 +1039,14 @@
                 document.getElementById('role_baru').value = role;
             }
 
-            document.getElementById('judul_form_user').innerText = "Edit Role User";
-            document.getElementById('btn_simpan_user').innerText = "Perbarui Role";
+            if(tomSelectInstances['satker_baru']) {
+                tomSelectInstances['satker_baru'].setValue(satker || '');
+            } else {
+                document.getElementById('satker_baru').value = satker || '';
+            }
+
+            document.getElementById('judul_form_user').innerText = "Edit Data User";
+            document.getElementById('btn_simpan_user').innerText = "Perbarui Data";
             document.getElementById('btn_batal_user').classList.remove('d-none');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -977,6 +1063,12 @@
                 tomSelectInstances['role_baru'].clear();
             } else {
                 document.getElementById('role_baru').value = '';
+            }
+
+            if(tomSelectInstances['satker_baru']) {
+                tomSelectInstances['satker_baru'].clear();
+            } else {
+                document.getElementById('satker_baru').value = '';
             }
 
             document.getElementById('judul_form_user').innerText = "Formulir Tambah User Baru";
@@ -1015,7 +1107,7 @@
             }
 
             if (error || !data) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Gagal memuat data user.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data user.</td></tr>`;
                 return;
             }
 
@@ -1024,7 +1116,7 @@
                 if (rolePenggunaAktif === 'super_admin') {
                     aksiHTML = `
                         <td class="text-center">
-                            <button class="btn btn-warning btn-sm me-1" onclick="editUser('${usr.id}', '${usr.email}', '${usr.role}')">Edit</button>
+                            <button class="btn btn-warning btn-sm me-1" onclick="editUser('${usr.id}', '${usr.email}', '${usr.role}', '${usr.satker || ''}')">Edit</button>
                             <button class="btn btn-danger btn-sm" onclick="konfirmasiHapusUser('${usr.id}')">Hapus</button>
                         </td>
                     `;
@@ -1035,6 +1127,7 @@
                         <td class="text-center">${idx + 1}</td>
                         <td>${usr.email}</td>
                         <td class="text-center"><span class="badge bg-secondary">${usr.role}</span></td>
+                        <td class="text-center">${usr.satker || '-'}</td>
                         ${aksiHTML}
                     </tr>
                 `;
