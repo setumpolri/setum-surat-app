@@ -1181,10 +1181,24 @@
             else dataKeluarTerakhir = data;
 
             const tbody = document.getElementById(`tabel_${tipe}`);
+            const thAksi = document.getElementById(`th_aksi_${tipe}`);
+            
+            // Logika HANYA 3 role ini yang memiliki Hak Akses Penuh (CRUD)
+            const adaHakAksi = (rolePenggunaAktif === 'super_admin' || rolePenggunaAktif === 'admin' || rolePenggunaAktif === 'kasubbag');
+
+            // Menyembunyikan atau menampilkan header kolom Aksi
+            if (adaHakAksi) {
+                if (thAksi) thAksi.classList.remove('d-none');
+            } else {
+                if (thAksi) thAksi.classList.add('d-none');
+            }
+
             tbody.innerHTML = ''; 
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
+                // Menyesuaikan rentang kolom (colspan) tabel saat kosong
+                const jumlahKolom = adaHakAksi ? "8" : "7";
+                tbody.innerHTML = `<tr><td colspan="${jumlahKolom}" class="text-center py-3 text-muted">Tidak ada data surat yang ditemukan.</td></tr>`;
                 document.getElementById(`info_halaman_${tipe}`).innerText = "Menampilkan 0 dari 0 data";
                 document.getElementById(`navigasi_halaman_${tipe}`).innerHTML = "";
                 return;
@@ -1193,13 +1207,15 @@
             data.forEach((surat, index) => {
                 const nomorUrut = dariIndex + index + 1;
                 
-                // Menambahkan 'kasubbag' ke daftar yang bisa melihat tombol Edit & Hapus
-                let tombolAksiHTML = `<span class="text-muted small">Hanya Baca</span>`;
-                if (rolePenggunaAktif === 'super_admin' || rolePenggunaAktif === 'admin' || rolePenggunaAktif === 'kasubbag') {
-                    tombolAksiHTML = `
+                let htmlKolomAksi = '';
+                
+                // Jika pengguna ada di dalam whitelist (adaHakAksi), render sel tombol
+                if (adaHakAksi) {
+                    const isiTombol = `
                         <button class="btn btn-warning btn-sm mb-1 w-100" onclick="editSurat('${tipe}', '${surat.id}')">Edit</button>
                         <button class="btn btn-danger btn-sm w-100" onclick="hapusSurat('${tipe}', '${surat.id}')">Hapus</button>
                     `;
+                    htmlKolomAksi = `<td class="text-center">${isiTombol}</td>`;
                 }
 
                 const baris = `
@@ -1211,9 +1227,7 @@
                         <td>${surat.pengirim}</td>
                         <td>${surat.tujuan || '-'}</td>
                         <td>${surat.perihal}</td>
-                        <td class="text-center">
-                            ${tombolAksiHTML}
-                        </td>
+                        ${htmlKolomAksi}
                     </tr>
                 `;
                 tbody.innerHTML += baris;
