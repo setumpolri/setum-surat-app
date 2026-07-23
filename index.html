@@ -325,14 +325,12 @@
                         <h5 class="mb-0 text-primary fw-bold">Daftar & Laporan Surat Masuk</h5>
                     </div>
                     <div class="card-body">
+                        <!-- Baris Filter & Tombol Reset Dipindahkan ke Sini -->
                         <div class="row g-2 mb-3 align-items-center">
                             <div class="col-md-3">
-                                <div class="input-group">
-                                    <input type="text" id="cari_masuk" class="form-control" placeholder="Cari teks..." onkeyup="handlePencarian('masuk')">
-                                    <button class="btn btn-outline-secondary d-none" type="button" id="btn_reset_masuk" onclick="resetPencarian('masuk')">✖</button>
-                                </div>
+                                <input type="text" id="cari_masuk" class="form-control" placeholder="Cari teks..." onkeyup="handlePencarian('masuk')">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
                                     <span class="input-group-text bg-white">Dari</span>
                                     <input type="date" id="mulai_masuk" class="form-control" onchange="handlePencarian('masuk')">
@@ -343,6 +341,9 @@
                                     <span class="input-group-text bg-white">Sampai</span>
                                     <input type="date" id="sampai_masuk" class="form-control" onchange="handlePencarian('masuk')">
                                 </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-outline-secondary w-100 d-none" type="button" id="btn_reset_masuk" onclick="resetPencarian('masuk')" title="Reset Filter">✖ Reset</button>
                             </div>
                             <div class="col-md-3 text-md-end">
                                 <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('masuk')">📥 Excel</button>
@@ -619,14 +620,12 @@
                         <h5 class="mb-0 text-success fw-bold">Daftar & Laporan Surat Keluar</h5>
                     </div>
                     <div class="card-body">
+                        <!-- Baris Filter & Tombol Reset Dipindahkan ke Sini -->
                         <div class="row g-2 mb-3 align-items-center">
                             <div class="col-md-3">
-                                <div class="input-group">
-                                    <input type="text" id="cari_keluar" class="form-control" placeholder="Cari teks..." onkeyup="handlePencarian('keluar')">
-                                    <button class="btn btn-outline-secondary d-none" type="button" id="btn_reset_keluar" onclick="resetPencarian('keluar')">✖</button>
-                                </div>
+                                <input type="text" id="cari_keluar" class="form-control" placeholder="Cari teks..." onkeyup="handlePencarian('keluar')">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
                                     <span class="input-group-text bg-white">Dari</span>
                                     <input type="date" id="mulai_keluar" class="form-control" onchange="handlePencarian('keluar')">
@@ -637,6 +636,9 @@
                                     <span class="input-group-text bg-white">Sampai</span>
                                     <input type="date" id="sampai_keluar" class="form-control" onchange="handlePencarian('keluar')">
                                 </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-outline-secondary w-100 d-none" type="button" id="btn_reset_keluar" onclick="resetPencarian('keluar')" title="Reset Filter">✖ Reset</button>
                             </div>
                             <div class="col-md-3 text-md-end">
                                 <button class="btn btn-success btn-sm me-1" onclick="unduhExcel('keluar')">📥 Excel</button>
@@ -1110,13 +1112,15 @@
             }
         }
 
-        // --- PENGELOLA PENCARIAN & RESET ---
+        // --- PENGELOLA PENCARIAN & RESET GLOBAL ---
         function handlePencarian(tipe) {
             const keyword = document.getElementById(`cari_${tipe}`).value;
+            const tglMulai = document.getElementById(`mulai_${tipe}`).value;
+            const tglSampai = document.getElementById(`sampai_${tipe}`).value;
             const btnReset = document.getElementById(`btn_reset_${tipe}`);
 
-            // Munculkan atau sembunyikan tombol reset berdasarkan isi teks
-            if (keyword.trim() !== "") {
+            // Tombol reset akan muncul jika salah satu filter pencarian (teks atau tanggal) sedang diisi
+            if (keyword.trim() !== "" || tglMulai !== "" || tglSampai !== "") {
                 btnReset.classList.remove('d-none');
             } else {
                 btnReset.classList.add('d-none');
@@ -1126,14 +1130,14 @@
         }
 
         function resetPencarian(tipe) {
-            // Kosongkan kotak teks pencarian
+            // Kosongkan seluruh kolom pencarian teks dan tanggal
             document.getElementById(`cari_${tipe}`).value = "";
-            document.getElementById(`btn_reset_${tipe}`).classList.add('d-none');
-            
-            // (Opsional) Kosongkan juga filter tanggal jika ingin ikut tereset
             document.getElementById(`mulai_${tipe}`).value = "";
             document.getElementById(`sampai_${tipe}`).value = "";
-
+            
+            // Sembunyikan kembali tombol reset
+            document.getElementById(`btn_reset_${tipe}`).classList.add('d-none');
+            
             // Tampilkan ulang tabel secara penuh
             tampilkanSurat(tipe);
         }
