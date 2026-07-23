@@ -841,25 +841,9 @@
             }
 
             pesanEl.className = "mt-3 text-center small fw-bold text-primary";
-            pesanEl.innerText = "Memeriksa data akun...";
-
-            // 1. Cek apakah email terdaftar di tabel profiles
-            const { data: cekUser, error: errCek } = await supabaseClient
-                .from('profiles')
-                .select('email')
-                .eq('email', email)
-                .single();
-
-            // Jika error atau data user kosong, berarti email memang belum terdaftar
-            if (errCek || !cekUser) {
-                pesanEl.className = "mt-3 text-center small fw-bold text-danger";
-                pesanEl.innerText = "Email anda belum terdaftar, silakan hubungi Admin";
-                return;
-            }
-
             pesanEl.innerText = "Memproses masuk...";
 
-            // 2. Jika email ditemukan di database, lakukan autentikasi password
+            // Langsung gunakan fungsi autentikasi bawaan Supabase
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
@@ -867,9 +851,12 @@
 
             if (error) {
                 pesanEl.className = "mt-3 text-center small fw-bold text-danger";
-                // Tangani khusus jika kredensial/password salah
+                
+                // Cek pesan error dari sistem Supabase
                 if (error.message.includes("Invalid login credentials")) {
-                    pesanEl.innerText = "Gagal masuk: Password Anda salah!";
+                    pesanEl.innerText = "Gagal masuk: Email atau password Anda salah!";
+                } else if (error.message.includes("Email not confirmed")) {
+                    pesanEl.innerText = "Gagal masuk: Email belum dikonfirmasi.";
                 } else {
                     pesanEl.innerText = "Gagal masuk: " + error.message;
                 }
