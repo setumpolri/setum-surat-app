@@ -778,10 +778,7 @@
             document.querySelectorAll('.searchable-select').forEach((el) => {
                 let instance = new TomSelect(el, {
                     create: false,
-                    sortField: {
-                        field: "text",
-                        direction: "asc"
-                    }
+                    sortField: false // Mengaktifkan kembali urutan asli sesuai daftar HTML
                 });
                 tomSelectInstances[el.id] = instance;
             });
